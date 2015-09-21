@@ -10,6 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.13.3",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "mongodb": "^2.0.42",
+    "mysql": "^2.9.0"
   }
 }
