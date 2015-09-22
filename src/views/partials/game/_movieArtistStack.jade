@@ -1,0 +1,8 @@
+- var index = 0;
+each movie, index in movies
+  img.movie(src=movie.movieImg)
+  hr
+  p #{movie.movieTitle}
+  hr
+  if typeof actorsChosen !== 'undefined'
+    p #{actorsChosen[index]} 

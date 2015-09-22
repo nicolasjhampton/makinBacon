@@ -1,0 +1,9 @@
+form.form(action='/movie', method='post')
+  input(type='text', name='movie')
+  button.btn.btn-primary(type='submit', value='Submit')
+form.form(action='/actor', method='post')
+  select.form-control(name='actor')
+    if typeof actors !== 'undefined'
+      each actor in actors
+        option(value=actor) #{actor}
+  button.btn.btn-primary(type='submit', value='Submit')
