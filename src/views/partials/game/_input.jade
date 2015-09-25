@@ -1,9 +1,14 @@
-form.form(action='/movie', method='post')
-  input(type='text', name='movie')
-  button.btn.btn-primary(type='submit', value='Submit')
-form.form(action='/actor', method='post')
-  select.form-control(name='actor')
-    if typeof actors !== 'undefined'
-      each actor in actors
-        option(value=actor) #{actor}
-  button.btn.btn-primary(type='submit', value='Submit')
+if input === "movies"
+  form.form(action='/movie', method='post')
+    select.form-control(name='movie')
+      if typeof actors !== 'undefined'
+        each movie in actors[actors.length - 1].credits
+          option(value=movie.id) #{movie.name}
+    button.btn.btn-primary(type='submit', value='Submit')
+if input === "actors"    
+  form.form(action='/actor', method='post')
+    select.form-control(name='actor')
+      if typeof actors !== 'undefined'
+        each actor in movies[movies.length - 1].credits
+          option(value=actor.id) #{actor.name}
+    button.btn.btn-primary(type='submit', value='Submit')

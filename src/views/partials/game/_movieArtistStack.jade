@@ -1,8 +1,24 @@
-- var index = 0;
-each movie, index in movies
-  img.movie(src=movie.movieImg)
+.row
+  .col-xs-3
+    img(src=actors[0].poster)
+  .col-xs-9
+    h2 #{actors[0].name}
+    p was in...
   hr
-  p #{movie.movieTitle}
-  hr
-  if typeof actorsChosen !== 'undefined'
-    p #{actorsChosen[index]} 
+  - var index = 0;
+  each movie, index in movies
+    .row
+      .col-xs-9
+        h2 #{movie.name}
+      .col-xs-3
+        img(src=movie.poster)
+      hr
+    if actors.length > index + 1
+      .row
+        .col-xs-3
+          img(src=actors[index + 1].poster)
+        .col-xs-9
+          p ...with
+          h2 #{actors[index + 1].name} 
+          p who was in...
+        hr
