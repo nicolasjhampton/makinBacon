@@ -1,96 +1,177 @@
 'use strict';
 
-/***************************
-  express boilerplate
- ***************************/
+/**********************************
+ express http/socket.io boilerplate
+ **********************************/
 
+// Starting our http/socket.io server
 var express = require('express'),
-    bodyParser = require('body-parser'),
-    Request = require('request');
+    app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io')(server);
 
-var app = express();
+// module needed to make get requests from the server
+var Request = require('request');
 
-app.set('port', (process.env.PORT || 3000));
-app.set('view engine', 'jade');
-app.set('views', __dirname + '/views');
+// Openshift adaptive enviornment variables
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
-app.use('/static', express.static(__dirname + '/public'));
+// set port for our express instance
+app.set('port', server_port);
 
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-app.use(bodyParser.json());
+// define public folder to serve static files
+app.use(express.static(__dirname + '/public'));
+
+// Set the sever to listen for get requests
+server.listen(app.get('port'), server_ip_address, function () {
+   console.log("Listening at " + server_ip_address + " on port " + app.get('port'));
+});
 
 /************************
  global variables
  ************************/
 
-// arrays of the actors and movies chosen
-var actors = [];
-var movies = [];
+// arrays of the actors and movies chosen (note: combined into stack)
+var stack = [];
 
-// decides what input is shown, the actor menu or the movie menu
-// this switch has a value of either 'actor' or 'movie'
-var input = "";
+// newGame will let us know that the game has already started
+// so we should come into the game in progress without resetting it
+var newGame = true;
 
-// our api key for api.themoviedb.org/3/
-// do not include in our repo
-var apiKey = '';
+
+/************************
+ themoviedb api variables
+ ************************/
+
+/*
+ * All the variables for the movie database are factored out
+ * and self-contained in this switch function, for easy update.
+ */
+var getApiOptions = function (optionsRequest, idOrPage) {
+
+  // our api key for api.themoviedb.org/3/
+  // go get your own!
+  var apiKey = '';
+
+  // Beginning Url for all api requests, using version 3 of api
+  var apiUrl = 'https://api.themoviedb.org/3/';
+
+  // Beginning Url for all pictures from api
+  var posterUrl = 'http://image.tmdb.org/t/p/w92';
+
+
+  switch(optionsRequest) {
+
+    case 'popular':
+       return {
+                url: apiUrl + 'person/popular?page=' + idOrPage + '&api_key=' + apiKey,
+                method: "GET"
+              };
+       break;
+
+    case 'actors':
+       return {
+                url: apiUrl + 'person/' + idOrPage + '?api_key=' + apiKey + '&append_to_response=movie_credits',
+                method: "GET"
+              };
+       break;
+
+    case 'movies':
+       return {
+                url: apiUrl + 'movie/' + idOrPage + '?api_key=' + apiKey + '&append_to_response=credits',
+                method: "GET"
+              };
+       break;
+
+    case 'poster':
+       return posterUrl + idOrPage;
+       break;
+  }
+};
+
 
 /***********************
-  routes
+ sockets
+ **********************/
+
+
+/*
+ * This is the first socket requested by a player,
+ * 'connect' is a native socket.io keyword
+ */
+io.sockets.on('connect', function(socket) {
+
+  console.log('request for start game data');
+
+  // check to see if a game is already in progress
+  if(newGame === true) {
+
+    // First is ran, and by the end we've used sendStack to emit the
+    // first actor
+    first(socket);
+
+  } else {
+
+    // if this isn't the first person in this game, then skip to
+    // the next route in the stack quietly
+    sendStack(socket);
+
+  } // end of newGame test
+
+  // After the first 'connect' communication is received,
+  // a reply is sent on update, and all sockets are listening
+  // and sending on 'update'.
+  socket.on('update', function(data) {
+
+    console.log('new addition to the stack received' + data);
+
+    var options = getApiOptions(data.type, data.id); //testData(data);
+
+    // call the database, create and store the actor, then call the update socket emit
+    getDBInfo(options, socket, data.type);
+
+  }); // end of 'update' socket
+}); // end of 'connect' socket
+
+
+/*
+ * This is the function we'll use to emit to all players
+ * it's built into getDBInfo at the end for timing reasons
+ */
+var sendStack = function(socket) {
+
+  // Set eventName to the 'update' socket
+  var eventName = 'update';
+
+  // Emit to all current connected players
+  io.sockets.emit(eventName, {stack:stack});
+
+};
+
+
+
+/***********************
+ API functions
  ***********************/
 
+/*
+ * The 'first' function gets the first actor randomly from themoviedb.org
+ */
 
-// clears all persistent data
-var clear = function (request, repsonse, next) {
+var first = function(socket) {
 
-  actors = [];
-  movies = [];
-  input = "";
-  next();
-
-}
-
-
-// home is always the last route on the stack
-var home = function (request, response){
-
- // feed the actors, movies, and correct input turn to be rendered
- response.render('layout', {actors:actors, movies:movies, input:input});
-
-};
-
-// postActor is route called after an actor choice has been made
-var postActor = function(request, response, next) {
-
- var actorIDObject = request.body;
-
- // the next call is passed to the request for timing purposes
- getActor(actorIDObject, response, next);
-
-};
-
-// postMovie is the route called after a movie has been entered
-var postMovie = function (request, response, next) {
-
- var movieIDObject = request.body;
- // the next call is passed to the request for timing purposes
- getMovie(movieIDObject, response, next);
-
-}
-
-// first sets the first actor at the start of the game
-var first = function(request, response, next) {
+  // if this is the first person in the game, set newGame to false
+  // and continue to get a random actor to start the game
+  newGame = false;
 
   // generate random numbers to choose a random actor
   var randomActor = Math.floor((Math.random() * 20));
   var randomPage = Math.floor((Math.random() * 100) + 1);
 
   // set options to call for a random page of twenty popular actors
-  var options = {
-    url: 'https://api.themoviedb.org/3/person/popular?page=' + randomPage + '&api_key=' + apiKey,
-    method: "GET"
-  };
+  // Note: See 'themoviedb api variables' section for contents
+  var options = getApiOptions('popular', randomPage);
 
   // make call for the random page of actors
   Request(options, function(error, dbResponse, dbbody) {
@@ -102,79 +183,25 @@ var first = function(request, response, next) {
       var jsonObject = JSON.parse(dbbody);
 
       // get the random actor from the list of twenty actors
-      // note: we must make a second call for the list of movies this actor has been in.
+      // Note: we must make a second call for the list of movies this actor has been in.
       var chosenActor = jsonObject.results[randomActor];
 
       // setting options for second, detailed actor call
-      options = {
-        url: 'https://api.themoviedb.org/3/person/' + chosenActor.id + '?api_key=' + apiKey + '&append_to_response=movie_credits',
-        method: "GET"
-      };
+      // Note: See 'themoviedb api variables' section for contents
+      options = getApiOptions('actors', chosenActor.id);
 
-      // make normal database call for actor info
-      getDBInfo(options, next, "actor");
+      // make normal database call for first actor's info
+      getDBInfo(options, socket, 'actors');
 
     }
   });
 };
 
-
-/*************************
- route stack
- *************************/
-
- /*
-  *  the way this works is that we always start from our
-  *  original get request, which has our first turn router
-  *  mounted on it, then each call made goes back and
-  *  forth between the post requests
-  */
-
-// Route stack taken for beginning a game
-app.get('/', [clear, first, home]);
-
-// Route stack taken every time a movie is selected
-app.post('/movie', urlencodedParser, [postMovie, home]);
-
-// Route stack taken every time an actor is selected
-app.post('/actor', urlencodedParser, [postActor, home]);
-
-
-
-/************************
-  database callbacks
- ************************/
-
-// Wrapper for the Request callback for a movie
-function getMovie (IDObject, response, next) {
-
-  // set the options for the database request
-  var options = {
-    url: 'http://api.themoviedb.org/3/movie/' + IDObject.movie + '?api_key=' + apiKey + '&append_to_response=credits',
-    method: "GET"
-  };
-
-  // call the database, create and store the movie, then call the next route
-  getDBInfo(options, next, "movie");
-
-};
-
-// Wrapper for the Request callback for an actor
-function getActor (IDObject, response, next) {
-
-  // set the options for the database request
-  var options = {
-    url: 'https://api.themoviedb.org/3/person/' + IDObject.actor + '?api_key=' + apiKey + '&append_to_response=movie_credits',
-    method: "GET"
-  };
-
-  // call the database, create and store the actor, then call the next route
-  getDBInfo(options, next, "actor");
-
-}
-
-
-function getDBInfo(options, next, infoRequest) {
+/*
+ * This function depends on a options and socket to be passed to it
+ * info request is the type of info requested: actors or movies
+ */
+var getDBInfo = function (options, socket, dataType) {
 
   // make request with whatever info is in options
   Request(options, function(error, dbResponse, dbbody) {
@@ -186,51 +213,55 @@ function getDBInfo(options, next, infoRequest) {
       var jsonObject = JSON.parse(dbbody);
 
       // test part one: if we asked for an actor
-      if(infoRequest === "actor") {
+      if(dataType === "actors") {
 
-        // create the actor with complete movie info
+        // create the actor with complete movie credits info
         var newActorObject = createActorObject(jsonObject);
 
         // store this actor into our list of chosen actors to be displayed
-        actors.push(newActorObject);
-
-        // set the next input displayed to be the list of movies this actor
-        // has appeared in
-        input = "movies";
+        stack.push(newActorObject);
 
       // test part two: if we asked for a movie
-      } else if(infoRequest === "movie") {
+    } else if(dataType === "movies") {
 
+        // create the movie with complete actor credits info
         var newMovieObject = createMovieObject(jsonObject);
 
         // store this movie into our list of chosen movies to be displayed
-        movies.push(newMovieObject);
+        stack.push(newMovieObject);
 
-        //set the next input displayed to be the list of actors that appear
-        // in this movie
-        input = "actors";
       }
 
-      // go to the next route in the stack
-      next();
+      // emit stack/input data
+      sendStack(socket);
+
     }
   });
-}
+};
 
 /*************************
  helper functions
  *************************/
 
-function createMovieObject(jsonObject) {
+/*
+ * These functions create the stack objects we'll emit back to the clients
+ */
+
+// creates a movie stack object
+var createMovieObject = function(jsonObject) {
 
   // pull the movie data we need from the response
   var movieTitle = jsonObject.original_title;
   var movieID = jsonObject.id;
-  var moviePoster = 'http://image.tmdb.org/t/p/w92' + jsonObject.poster_path;
+
+  // We're creating the filepath for our poster here
+  // Note: See 'themoviedb api variables' section for contents
+  var moviePoster = getApiOptions('poster', jsonObject.poster_path);
 
   // map a new array of cast members with only relevant details
   var movieCast = jsonObject.credits.cast.map(function(obj){
     var actor = {
+      type: "actors",
       name: obj.name,
       id: obj.id
     };
@@ -239,27 +270,33 @@ function createMovieObject(jsonObject) {
 
   // make a singular reference for this movie
   var newMovieObject = {
+    type: "movies",
     name: movieTitle,
     id: movieID,
     poster: moviePoster,
     credits: movieCast
   };
 
+  // return created object
   return newMovieObject;
 
 }
 
-function createActorObject(jsonObject) {
+// Creates an actor stack object
+var createActorObject = function(jsonObject) {
 
   // store details for the chosen actor
   var actorName = jsonObject.name;
   var actorID = jsonObject.id;
-  var actorPoster = 'http://image.tmdb.org/t/p/w92' + jsonObject.profile_path
 
+  // We're creating the filepath for our poster here
+  // Note: See 'themoviedb api variables' section for contents
+  var actorPoster = getApiOptions('poster', jsonObject.profile_path);
 
   // map a new array of movies actor has been in with only relevant details
   var actorMovies = jsonObject.movie_credits.cast.map(function(obj){
     var movie = {
+      type: "movies",
       name: obj.original_title,
       id: obj.id
     };
@@ -268,20 +305,14 @@ function createActorObject(jsonObject) {
 
   // make a singular reference object for this actor
   var newActorObject = {
+    type: "actors",
     name: actorName,
     id: actorID,
     poster: actorPoster,
     credits: actorMovies
   };
 
+  // return created object
   return newActorObject;
 
 }
-
-/******************
- port listener
- ******************/
-
-app.listen(app.get('port'), function() {
-  console.log('Express is running a Frontend server on port:' + app.get('port'));
-});

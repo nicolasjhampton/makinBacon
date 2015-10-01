@@ -1,0 +1,115 @@
+- var index = 0;
+each movie, index in movies
+  .row
+    .col-xs-9
+      h2 #{movie.name}
+    .col-xs-3
+      img(src=movie.poster)
+    hr
+  if actors.length > index + 1
+    .row
+      .col-xs-3
+        img(src=actors[index + 1].poster)
+      .col-xs-9
+        p ...with
+        h2 #{actors[index + 1].name}
+        p who was in...
+      hr
+
+
+
+      .col-xs-3
+        img(src=actors[0].poster)
+      .col-xs-9
+        h2 #{actors[0].name}
+        p was in...
+      hr
+    .stack
+
+
+_input.jade
+
+form.form(action='')
+  select.form-control(name='movie')
+    option(ng-repeat="movie in actors[actors.length - 1].credits", value=movie.id) {{movie.name}}
+  button.btn.btn-primary(ng-click="selectMovie(movie.id)")
+form.form(action='')
+  select.form-control(name='actor')
+    option(ng-repeat="actor in movies[movies.length - 1].credits", value=actor.id) {{actor.name}}
+  button.btn.btn-primary(ng-click="selectActor(actor.id)")
+
+_foot.jade scrap
+
+script(src="./static/js/controllers/mainController.js")
+
+
+$scope.selection = function(option) {
+  console.log($scope.option);
+  console.log(option);
+  $socket.emit('selection', { id:$scope.option.id, input:$scope.input });
+};
+
+script(src="./static/js/services/socketModule.js")
+script(src="./static/js/directives/myDirectives.js")
+script(src="./static/js/controllers/myControllers.js")
+
+
+// socketModule.js in services directory
+
+//attaching a factory to connect and emit data from socket.io to angular models
+app.factory('socket', ['$rootScope', function($rootScope) {
+
+  // init a socket.io instance
+	var socket = io();
+
+  // we'll return these two accessable socket methods
+	return {
+    /*
+     * wrap the on method from socket.io
+     * the event could be anything passed to
+     * eventName, the callback could be anything
+     * that was passed. This is just a wrapper to
+     * communicate socket.io info to angular
+     */
+		on: function(eventName, callback) {
+
+			socket.on(eventName, function() {
+        /*
+         * arguments is a local variable in every function
+         * that puts each argument given to that function in
+         * an array. I believe our connection status is in
+         * this callback array. Logging it out to test.
+        */
+				var args = arguments;
+        console.log(args);
+
+        /*
+         * we're going to attach the callback with the
+         * arguments and attach apply it to the rootScope
+         * of our angular app. This makes the data from
+         * socket.io attached to the rootScope in angular,
+         * integrating the two.
+         */
+				$rootScope.$apply(function() {
+          /*
+           * The javascript apply method takes two parameters:
+           * the value of this, and an array of arguments, and
+           * passes them to the object. From what I can tell now,
+           * we're basically folding the callback upon itself
+           */
+					callback.apply(socket, args);
+				});
+			});
+		},
+		emit: function(eventName, data, callback) {
+			socket.emit(eventName, data, function() {
+				var args = arguments;
+				$rootScope.$apply(function() {
+					if(callback) {
+						callback.apply(socket, args);
+					}
+				});
+			})
+		}
+	};
+}]);
