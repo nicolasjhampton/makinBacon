@@ -11,13 +11,10 @@
     <div class="container">
       <div class="row" ng-controller="MainCtrl as main"><!--Controller Declaration-->
         <div class="col-sm-3"><!--First Column: Input-->
-          <form ng-submit='selection(option)'><!--Input directive-->
-            <select class="form-control" ng-model="option" ng-options="option as option.name for option in stack[stack.length - 1].credits"></select>
-            <button class="btn-primary" ng-click="submit" ng-show="show">Submit</button>
-          </form><!--End of Input directive-->
+          <picker topofstack="stack[stack.length - 1]" selection="selection"></picker>
         </div><!--End of First Column-->
         <div class="col-sm-4"><!--Second Column: Stack-->
-          <game-stack ng-repeat="stackItem in stack" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
+          <game-stack ng-repeat="stackItem in stack | orderBy : index : reverse" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
         </div><!--End of Second Column-->
         <div class="col-sm-2"><!--Third Column: Users-->
           <span></span>

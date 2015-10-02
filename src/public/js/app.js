@@ -9,19 +9,38 @@
       return socket;
     });
 
+    app.directive('picker', function() {
+          return {
+            restrict: 'E',
+            scope: {
+              topofstack: '=topofstack',
+              selection: '='
+            },
+            templateUrl: './js/directives/_picker.html'
+          };
+      });
+
     app.directive('gameStack', function() {
           return {
             restrict: 'E',
             scope: {
-              stackitem: '=stackitem'
+              stackitem: '=stackitem',
+              first: '=first',
+              last: '=last'
             },
-            templateUrl: './js/directives/mainGameStack.html',
+            templateUrl: './js/directives/_gameStack.html',
             link: function(scope) {
               if(scope.stackitem.type === 'actors') {
                 scope.push = "";
                 scope.pull = "text-align";
-                scope.subtitle = "was in..."
-              } else {
+                if(scope.first) {
+                  scope.subtitle = "was in...";
+                } else if(scope.last){
+                  scope.subtitle = "";
+                } else {
+                  scope.subtitle = "who was in...";
+                }
+              } else if(scope.stackitem.type === 'movies') {
                 scope.push = "col-xs-push-9";
                 scope.pull = "col-xs-pull-3";
                 scope.subtitle = "with..."

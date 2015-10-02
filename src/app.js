@@ -51,7 +51,7 @@ var newGame = true;
 var getApiOptions = function (optionsRequest, idOrPage) {
 
   // our api key for api.themoviedb.org/3/
-  // go get your own
+  // Go get your own!
   var apiKey = '';
 
   // Beginning Url for all api requests, using version 3 of api
