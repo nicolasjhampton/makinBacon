@@ -17,17 +17,7 @@
           </form><!--End of Input directive-->
         </div><!--End of First Column-->
         <div class="col-sm-4"><!--Second Column: Stack-->
-          <div class="container">
-            <div class="row" ng-repeat="stackItem in stack"><!--Stack directive: Row repeats for every object in stack-->
-              <div class"col-xs-3">
-                <img ng-src="{{ stackItem.poster }}">
-              </div>
-              <div class="col-xs-9">
-                <h2>{{ stackItem.name | uppercase }}</h2>
-                <p>was in...</p><!--This needs to change based on movie or actor-->
-              </div>
-            </div><!--End of Stack directive-->
-          </div>
+          <game-stack ng-repeat="stackItem in stack" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
         </div><!--End of Second Column-->
         <div class="col-sm-2"><!--Third Column: Users-->
           <span></span>

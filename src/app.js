@@ -51,7 +51,7 @@ var newGame = true;
 var getApiOptions = function (optionsRequest, idOrPage) {
 
   // our api key for api.themoviedb.org/3/
-  // go get your own!
+  // go get your own
   var apiKey = '';
 
   // Beginning Url for all api requests, using version 3 of api
@@ -60,6 +60,8 @@ var getApiOptions = function (optionsRequest, idOrPage) {
   // Beginning Url for all pictures from api
   var posterUrl = 'http://image.tmdb.org/t/p/w92';
 
+  // If we get no image we'll send a generic question mark image from wikipedia
+  var unknownImg = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Question_mark_(black_on_white).png';
 
   switch(optionsRequest) {
 
@@ -85,7 +87,15 @@ var getApiOptions = function (optionsRequest, idOrPage) {
        break;
 
     case 'poster':
-       return posterUrl + idOrPage;
+       if(idOrPage !== null) {
+
+         return posterUrl + idOrPage;
+
+       } else {
+
+         return unknownImg;
+
+       }
        break;
   }
 };
@@ -222,7 +232,7 @@ var getDBInfo = function (options, socket, dataType) {
         stack.push(newActorObject);
 
       // test part two: if we asked for a movie
-    } else if(dataType === "movies") {
+      } else if(dataType === "movies") {
 
         // create the movie with complete actor credits info
         var newMovieObject = createMovieObject(jsonObject);
@@ -291,7 +301,9 @@ var createActorObject = function(jsonObject) {
 
   // We're creating the filepath for our poster here
   // Note: See 'themoviedb api variables' section for contents
+
   var actorPoster = getApiOptions('poster', jsonObject.profile_path);
+
 
   // map a new array of movies actor has been in with only relevant details
   var actorMovies = jsonObject.movie_credits.cast.map(function(obj){

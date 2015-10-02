@@ -15,3 +15,7 @@
   max-height: 200px;
   border-radius: 50px;
 }
+
+.text-align {
+  text-align: right;
+}

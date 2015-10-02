@@ -1,0 +1,11 @@
+<div class="row"><!--Stack directive: Row repeats for every object in stack-->
+  <div>
+    <div class"col-xs-3">
+      <img ng-src="{{ stackitem.poster }}" style="max-width: 92px; max-height:132px">
+    </div>
+    <div class="col-xs-9">
+      <h2>{{ stackitem.name | uppercase }}</h2>
+      <p>was in...</p><!--This needs to change based on movie or actor-->
+    </div>
+  </div>
+</div><!--End of Stack directive-->
