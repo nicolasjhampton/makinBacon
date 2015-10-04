@@ -33,11 +33,16 @@ server.listen(app.get('port'), server_ip_address, function () {
  ************************/
 
 // arrays of the actors and movies chosen (note: combined into stack)
-var stack = [];
+var gameStack = [];
 
 // newGame will let us know that the game has already started
 // so we should come into the game in progress without resetting it
 var newGame = true;
+
+// Each game started will get a gameNumber ID, which will
+// correspond with a socket route and it's storage position in the
+// stack of games
+var gameNumber = 0;
 
 
 /************************
@@ -101,9 +106,9 @@ var getApiOptions = function (optionsRequest, idOrPage) {
 };
 
 
-/***********************
- sockets
- **********************/
+/**************************************
+ Open socket routes: Main program here
+ **************************************/
 
 
 /*
@@ -112,50 +117,103 @@ var getApiOptions = function (optionsRequest, idOrPage) {
  */
 io.sockets.on('connect', function(socket) {
 
-  console.log('request for start game data');
+  // Clear any old game from the browser, happens when server is restarted to everyone
+  newPlayerInit(socket);
 
-  // check to see if a game is already in progress
-  if(newGame === true) {
+  /*
+   * 'select game' : This socket receives the game
+   * choice at the Beginning of the game
+   */
+  socket.on('select game', function(data){
 
-    // First is ran, and by the end we've used sendStack to emit the
-    // first actor
-    first(socket);
+    // Once a selection comes back on the gameList socket...
+    if(data.gameID === 'newGame') {
+      //This only gets called by the first player in a game
 
-  } else {
+      // join a new private game room here
+      socket.join(gameNumber.toString());
 
-    // if this isn't the first person in this game, then skip to
-    // the next route in the stack quietly
-    sendStack(socket);
+      // Create a new game and pass the ID to first to start it
+      first(socket, createGame(gameNumber));
+    } else {
+      // ... else move them to the appropriate socket for their selected game
+      socket.join(data.gameID.toString());
 
-  } // end of newGame test
+      // then send them a new update of the current game in progress
+      sendStack(socket, data.gameID, true);
+    }
+  }); // End of 'select game' socket
 
-  // After the first 'connect' communication is received,
-  // a reply is sent on update, and all sockets are listening
-  // and sending on 'update'.
+  /*
+   * This 'update' socket is split into rooms for each game
+   * we receive new game moves here
+   */
   socket.on('update', function(data) {
 
-    console.log('new addition to the stack received' + data);
+    console.log('new addition to the stack received ' + data.gameID);
+    // we'll receive :{
+    //                  gameID: (the gameStack index and room #),
+    //                  type: ('movies' or 'actors'),
+    //                  id: (id of movie or actor chosen)
+    //                }
+    // ToDo: add the player who sent the data
 
-    var options = getApiOptions(data.type, data.id); //testData(data);
+    // Test to see if communication was too fast and we need to drop a update
+    if(data.type === gameStack[data.gameID].stack[gameStack[data.gameID].stack.length - 1].type) {
 
-    // call the database, create and store the actor, then call the update socket emit
-    getDBInfo(options, socket, data.type);
+      // If we somehow got out of order (meaning the request is the same type
+      // as the last item in the stack because two updates came in at the same
+      // time) discard request.
 
+    } else {
+
+      // Set the options for the new api request
+      var options = getApiOptions(data.type, data.id);
+
+      // call the database, create and store the actor, then emit the update
+      getDBInfo(options, socket, data.gameID, data.type, false);
+
+    }
   }); // end of 'update' socket
 }); // end of 'connect' socket
 
+
+
+/***********************
+ Emitters
+ ***********************/
 
 /*
  * This is the function we'll use to emit to all players
  * it's built into getDBInfo at the end for timing reasons
  */
-var sendStack = function(socket) {
+var sendStack = function(socket, ID, firstStackEmit) {
 
-  // Set eventName to the 'update' socket
-  var eventName = 'update';
+  console.log(gameStack[ID].gameID);
 
   // Emit to all current connected players
-  io.sockets.emit(eventName, {stack:stack});
+  io.sockets.in(ID.toString()).emit('update', {game:gameStack[ID]});
+
+  // if this is a game just created, update everyone's game list
+  if(firstStackEmit) {
+    io.sockets.emit('gameList', {gameList:createGameList()});
+  }
+
+};
+
+/*
+ * This communication function is ran when a new browser arrives
+ */
+var newPlayerInit = function(socket) {
+
+  // Clear any old game in the browser
+  socket.emit('update', {game:{}});
+
+  // Log new player. Later we'll create a player near here
+  console.log('New player entered');
+
+  // create and emit a current list of games, then wait for selection
+  socket.emit('gameList', {gameList:createGameList()});
 
 };
 
@@ -168,12 +226,7 @@ var sendStack = function(socket) {
 /*
  * The 'first' function gets the first actor randomly from themoviedb.org
  */
-
-var first = function(socket) {
-
-  // if this is the first person in the game, set newGame to false
-  // and continue to get a random actor to start the game
-  newGame = false;
+var first = function(socket, ID) {
 
   // generate random numbers to choose a random actor
   var randomActor = Math.floor((Math.random() * 20));
@@ -201,7 +254,10 @@ var first = function(socket) {
       options = getApiOptions('actors', chosenActor.id);
 
       // make normal database call for first actor's info
-      getDBInfo(options, socket, 'actors');
+      // here we added a boolean value of firstStackEmit
+      // so if it's the first recevied stack, it goes on the
+      // broadcast socket
+      getDBInfo(options, socket, ID, 'actors', true);
 
     }
   });
@@ -211,7 +267,7 @@ var first = function(socket) {
  * This function depends on a options and socket to be passed to it
  * info request is the type of info requested: actors or movies
  */
-var getDBInfo = function (options, socket, dataType) {
+var getDBInfo = function (options, socket, ID, dataType, firstStackEmit) {
 
   // make request with whatever info is in options
   Request(options, function(error, dbResponse, dbbody) {
@@ -228,8 +284,8 @@ var getDBInfo = function (options, socket, dataType) {
         // create the actor with complete movie credits info
         var newActorObject = createActorObject(jsonObject);
 
-        // store this actor into our list of chosen actors to be displayed
-        stack.push(newActorObject);
+        // store this actor into the corresponding game in the gameStack
+        gameStack[ID].stack.push(newActorObject);
 
       // test part two: if we asked for a movie
       } else if(dataType === "movies") {
@@ -237,21 +293,79 @@ var getDBInfo = function (options, socket, dataType) {
         // create the movie with complete actor credits info
         var newMovieObject = createMovieObject(jsonObject);
 
-        // store this movie into our list of chosen movies to be displayed
-        stack.push(newMovieObject);
+        // store this movie into the corresponding game in the gameStack
+        gameStack[ID].stack.push(newMovieObject);
 
       }
-
-      // emit stack/input data
-      sendStack(socket);
+      console.log(ID);
+      // emit stack/input data to the gameID route
+      sendStack(socket, ID, firstStackEmit);
 
     }
   });
 };
 
 /*************************
- helper functions
+  Object functions
  *************************/
+
+ /*
+  * This is the function we'll use to create a list of the
+  * current games for a player to join
+  */
+ var createGameList = function() {
+
+   // create a list of games
+   var gameList = gameStack.map(function(obj){
+     var game = {
+       gameID: obj.gameID,
+       players: obj.players,
+       starting: obj.stack[0].name
+     };
+     return game;
+   });
+   console.log(gameList);
+   // return game list
+   return gameList;
+
+ };
+
+/*
+ * This function will create the game object
+ * Each player will have and id that corresponds to a
+ * incrementing number property in the player object,
+ * and the value of that property will be their score.
+ * we're also going to start storing the stack inside this
+ * object.
+ */
+var createGame = function (currentGameNumberIndex) {
+
+  // Create a new game w/ ID from the gameNumber index
+  var newGameID = currentGameNumberIndex;
+
+  // increment the global gameNumber index
+  gameNumber++;
+
+  // create a new game object
+  var game = {
+    gameID: newGameID,
+    players:{0:0},
+    actorCount: 0,
+    isBacon: false,
+    stack:[]
+  }
+
+  // We're going to put the game we create at it's location
+  // in the game stack that corresponds with it's gameID
+  gameStack[newGameID] = game;
+
+  // once we create the game, we're going to increment the
+  // gameNumber to give a unique id to the next game,
+  // then return the gameID of this game for reference.
+
+  return newGameID;
+};
+
 
 /*
  * These functions create the stack objects we'll emit back to the clients
@@ -290,7 +404,7 @@ var createMovieObject = function(jsonObject) {
   // return created object
   return newMovieObject;
 
-}
+};
 
 // Creates an actor stack object
 var createActorObject = function(jsonObject) {
@@ -327,4 +441,4 @@ var createActorObject = function(jsonObject) {
   // return created object
   return newActorObject;
 
-}
+};

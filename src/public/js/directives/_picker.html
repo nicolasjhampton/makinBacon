@@ -1,4 +1,4 @@
 <form ng-submit='selection(option)'><!--Input directive-->
-  <select class="form-control" ng-model="option" ng-options="option as option.name for option in topofstack.credits"></select>
+  <select class="form-control" ng-model="option" ng-options="option as option.name for option in topofstack.credits | orderBy:'+name'"></select>
   <button class="btn-primary" ng-click="submit">Submit</button>
 </form><!--End of Input directive-->
