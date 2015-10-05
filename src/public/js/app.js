@@ -110,13 +110,9 @@
        */
       socket.on('update', function(data){
 
-
-
-
         // Update our local stack variable in the scope
         $scope.game = data.game;
         $scope.gameID = data.game.gameID;
-        console.log(Object.keys(data.game)[0]);
 
         // This actually tests to see if we're in a game yet
         if(Object.keys(data.game)[0] !== undefined) {

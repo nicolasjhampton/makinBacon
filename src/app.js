@@ -56,8 +56,8 @@ var gameNumber = 0;
 var getApiOptions = function (optionsRequest, idOrPage) {
 
   // our api key for api.themoviedb.org/3/
-  // Go get your own!
-  var apiKey = '';
+  // do not include in our repo
+  var apiKey = 'aad65b32d0b325da9b0b9b9e33fcdaa6';
 
   // Beginning Url for all api requests, using version 3 of api
   var apiUrl = 'https://api.themoviedb.org/3/';
