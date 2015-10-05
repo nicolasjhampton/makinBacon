@@ -1,0 +1,19 @@
+<div ng-hide="userentered">
+  <input class="form-control" type="text" ng-model="username">
+  <button class="btn-primary" ng-click="adduser(username)">Enter Name</button>
+</div>
+<div ng-show="userentered">
+  <div class="row">
+    <div class="col-xs-6">
+      <button class="btn-primary" ng-click="new()">New Game</button>
+    </div>
+    <div class="col-xs-6">
+      <button class="btn-primary" ng-click="join(game)">Join Game</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <select class="form-control" ng-model="game" ng-options="game as game.starting for game in gamelist"></select>
+    </div>
+  </div>
+</div>

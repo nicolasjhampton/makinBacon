@@ -118,6 +118,7 @@ var getApiOptions = function (optionsRequest, idOrPage) {
 io.sockets.on('connect', function(socket) {
 
   // Clear any old game from the browser, happens when server is restarted to everyone
+  // for the first game, the starting actor is going to be null, thus the or pipe in createGameList
   newPlayerInit(socket);
 
   /*
@@ -126,6 +127,7 @@ io.sockets.on('connect', function(socket) {
    */
   socket.on('select game', function(data){
 
+    console.log('selection received');
     // Once a selection comes back on the gameList socket...
     if(data.gameID === 'newGame') {
       //This only gets called by the first player in a game
@@ -134,10 +136,13 @@ io.sockets.on('connect', function(socket) {
       socket.join(gameNumber.toString());
 
       // Create a new game and pass the ID to first to start it
-      first(socket, createGame(gameNumber));
+      first(socket, createGame(gameNumber, data.player));
     } else {
       // ... else move them to the appropriate socket for their selected game
       socket.join(data.gameID.toString());
+
+      // Todo: Add player to the game
+      gameStack[data.gameID].playerList[data.player] = 0;
 
       // then send them a new update of the current game in progress
       sendStack(socket, data.gameID, true);
@@ -153,10 +158,11 @@ io.sockets.on('connect', function(socket) {
     console.log('new addition to the stack received ' + data.gameID);
     // we'll receive :{
     //                  gameID: (the gameStack index and room #),
+    //                  player: (name of the player who made selection),
     //                  type: ('movies' or 'actors'),
     //                  id: (id of movie or actor chosen)
     //                }
-    // ToDo: add the player who sent the data
+
 
     // Test to see if communication was too fast and we need to drop a update
     if(data.type === gameStack[data.gameID].stack[gameStack[data.gameID].stack.length - 1].type) {
@@ -170,8 +176,9 @@ io.sockets.on('connect', function(socket) {
       // Set the options for the new api request
       var options = getApiOptions(data.type, data.id);
 
+      // we factored down data.gameID and data.type into data to include player data
       // call the database, create and store the actor, then emit the update
-      getDBInfo(options, socket, data.gameID, data.type, false);
+      getDBInfo(options, socket, data, false);
 
     }
   }); // end of 'update' socket
@@ -226,7 +233,7 @@ var newPlayerInit = function(socket) {
 /*
  * The 'first' function gets the first actor randomly from themoviedb.org
  */
-var first = function(socket, ID) {
+var first = function(socket, IDandPlayerObject) {
 
   // generate random numbers to choose a random actor
   var randomActor = Math.floor((Math.random() * 20));
@@ -253,11 +260,17 @@ var first = function(socket, ID) {
       // Note: See 'themoviedb api variables' section for contents
       options = getApiOptions('actors', chosenActor.id);
 
+      var IDPlayerAndTypeObject = {
+                                gameID:IDandPlayerObject.gameID,
+                                player: IDandPlayerObject.player,
+                                type: "actors"
+                              };
+
       // make normal database call for first actor's info
       // here we added a boolean value of firstStackEmit
       // so if it's the first recevied stack, it goes on the
       // broadcast socket
-      getDBInfo(options, socket, ID, 'actors', true);
+      getDBInfo(options, socket, IDPlayerAndTypeObject, true);
 
     }
   });
@@ -267,7 +280,7 @@ var first = function(socket, ID) {
  * This function depends on a options and socket to be passed to it
  * info request is the type of info requested: actors or movies
  */
-var getDBInfo = function (options, socket, ID, dataType, firstStackEmit) {
+var getDBInfo = function (options, socket, data, firstStackEmit) {
 
   // make request with whatever info is in options
   Request(options, function(error, dbResponse, dbbody) {
@@ -279,27 +292,31 @@ var getDBInfo = function (options, socket, ID, dataType, firstStackEmit) {
       var jsonObject = JSON.parse(dbbody);
 
       // test part one: if we asked for an actor
-      if(dataType === "actors") {
+      if(data.type === "actors") {
 
+        if(firstStackEmit === true) {
+          var newActorObject = createActorObject(jsonObject, "start");
+        } else {
         // create the actor with complete movie credits info
-        var newActorObject = createActorObject(jsonObject);
+          var newActorObject = createActorObject(jsonObject, data.player);
+        }
 
         // store this actor into the corresponding game in the gameStack
-        gameStack[ID].stack.push(newActorObject);
+        gameStack[data.gameID].stack.push(newActorObject);
 
       // test part two: if we asked for a movie
-      } else if(dataType === "movies") {
+    } else if(data.type === "movies") {
 
         // create the movie with complete actor credits info
-        var newMovieObject = createMovieObject(jsonObject);
+        var newMovieObject = createMovieObject(jsonObject, data.player);
 
         // store this movie into the corresponding game in the gameStack
-        gameStack[ID].stack.push(newMovieObject);
+        gameStack[data.gameID].stack.push(newMovieObject);
 
       }
-      console.log(ID);
+      console.log(data.gameID);
       // emit stack/input data to the gameID route
-      sendStack(socket, ID, firstStackEmit);
+      sendStack(socket, data.gameID, firstStackEmit);
 
     }
   });
@@ -319,8 +336,8 @@ var getDBInfo = function (options, socket, ID, dataType, firstStackEmit) {
    var gameList = gameStack.map(function(obj){
      var game = {
        gameID: obj.gameID,
-       players: obj.players,
-       starting: obj.stack[0].name
+       playerList: obj.playerList,
+       starting: obj.stack[0].name || null
      };
      return game;
    });
@@ -338,22 +355,38 @@ var getDBInfo = function (options, socket, ID, dataType, firstStackEmit) {
  * we're also going to start storing the stack inside this
  * object.
  */
-var createGame = function (currentGameNumberIndex) {
+var createGame = function (currentGameNumberIndex, startingPlayer) {
 
   // Create a new game w/ ID from the gameNumber index
   var newGameID = currentGameNumberIndex;
 
+  // Create an object that has usernames for each key and
+  // a score for each value
+  var players = {};
+  players[startingPlayer] = 0;
+
+  /*
+    players = {
+      name1: score,
+      name2: score,
+      name3: score,
+      etc...
+    }
+  }
+  */
   // increment the global gameNumber index
   gameNumber++;
 
   // create a new game object
   var game = {
     gameID: newGameID,
-    players:{0:0},
+    playerList:players,
     actorCount: 0,
     isBacon: false,
     stack:[]
   }
+
+  console.log(game);
 
   // We're going to put the game we create at it's location
   // in the game stack that corresponds with it's gameID
@@ -363,7 +396,7 @@ var createGame = function (currentGameNumberIndex) {
   // gameNumber to give a unique id to the next game,
   // then return the gameID of this game for reference.
 
-  return newGameID;
+  return {gameID:newGameID, player:startingPlayer};
 };
 
 
@@ -372,7 +405,7 @@ var createGame = function (currentGameNumberIndex) {
  */
 
 // creates a movie stack object
-var createMovieObject = function(jsonObject) {
+var createMovieObject = function(jsonObject, player) {
 
   // pull the movie data we need from the response
   var movieTitle = jsonObject.original_title;
@@ -394,6 +427,7 @@ var createMovieObject = function(jsonObject) {
 
   // make a singular reference for this movie
   var newMovieObject = {
+    player:player,
     type: "movies",
     name: movieTitle,
     id: movieID,
@@ -407,7 +441,7 @@ var createMovieObject = function(jsonObject) {
 };
 
 // Creates an actor stack object
-var createActorObject = function(jsonObject) {
+var createActorObject = function(jsonObject, player) {
 
   // store details for the chosen actor
   var actorName = jsonObject.name;
@@ -431,6 +465,7 @@ var createActorObject = function(jsonObject) {
 
   // make a singular reference object for this actor
   var newActorObject = {
+    player:player,
     type: "actors",
     name: actorName,
     id: actorID,

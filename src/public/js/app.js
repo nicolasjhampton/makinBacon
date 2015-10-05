@@ -15,9 +15,34 @@
             restrict: 'E',
             scope: {
               topofstack: '=topofstack',
-              selection: '='
+              selectoption: '='
             },
             templateUrl: './js/directives/_picker.html'
+          };
+      });
+
+    app.directive('playerList', function() {
+          return {
+            restrict: 'E',
+            scope: {
+              listofplayers: '='
+            },
+            templateUrl: './js/directives/_playerList.html'
+          };
+      });
+
+    // Directive for our game input to choose a movie/actor
+    app.directive('gameSelector', function() {
+          return {
+            restrict: 'E',
+            scope: {
+              new: '&',
+              join: '=',
+              adduser: '=',
+              gamelist: '=',
+              userentered: '='
+            },
+            templateUrl: './js/directives/_gameSelector.html'
           };
       });
 
@@ -63,6 +88,8 @@
       // We start out without a gameID
       $scope.gameID = "uninitialized";
 
+      $scope.usernamePresent = false;
+
       /**********************
         Socket listeners
        **********************/
@@ -83,7 +110,29 @@
         // Update our local stack variable in the scope
         $scope.stack = data.game.stack;
         $scope.gameID = data.game.gameID;
+        console.log(Object.keys(data.game)[0]);
 
+        if(Object.keys(data.game)[0] !== undefined) {
+
+          $scope.playerList = Object.keys(data.game.playerList).map(function(value) {
+            return {name:value, score:data.game.playerList[value]};
+          });
+          console.log($scope.playerList)
+        }
+
+
+
+        console.log($scope.playerList);
+
+        /*
+        var game = {
+          gameID: newGameID,
+          playerList:players,
+          actorCount: 0,
+          isBacon: false,
+          stack:[]
+        }
+        */
         // Updates the view with new stack data
         $scope.$digest();
 
@@ -93,15 +142,34 @@
         Buttons
       ***********************/
 
+      $scope.createUsername = function(username) {
+        $scope.username = username;
+        $scope.usernamePresent = true;
+      };
+
+      // Button to start a new game
+      $scope.startNewGame = function () {
+        var message = {gameID:'newGame', player:$scope.username};
+        socket.emit('select game', message);
+      };
+
+      // Button to switch to another game
+      $scope.joinGame = function (data) {
+        console.log(data);
+        var message = {gameID:data.gameID, player:$scope.username};
+        socket.emit('select game', message);
+      };
+
       // Button for emitting new stack addition
       $scope.selection = function (data) {
 
         // We're going to emit this to the always listening update
         // socket on the server, server will re-emit to our
         // specific room after changes
-        // {gameID: index, type: ('movies' or 'actors'), id:(id of movie or actor) }
+        // {gameID: index, player: (player who made choice, this client), type: ('movies' or 'actors'), id:(id of movie or actor) }
         var message = {
                         gameID:$scope.gameID,
+                        player: $scope.username,
                         type: data.type,
                         id: data.id,
                       };
@@ -110,20 +178,5 @@
         socket.emit('update', message);
 
       }; // End of emit update button
-
-
-      // Button to start a new game
-      $scope.newGameStart = function () {
-        var message = {gameID:'newGame'};
-        socket.emit('select game', message);
-      }
-
-
-      // Button to switch to another game
-      $scope.gameSelect = function (data) {
-        var message = {gameID:$scope.game.gameID};
-        socket.emit('select game', message);
-      }
     }); // End of controller
-
 })();

@@ -11,32 +11,25 @@
   <body ng-app="myApp"><!--App Declaration-->
     <div class="container">
       <div class="row" ng-controller="MainCtrl as main"><!--Controller Declaration-->
+
         <div class="col-sm-3"><!--First Column: Input-->
-          <picker topofstack="stack[stack.length - 1]" selection="selection"></picker>
+          <h2>{{ username }}</h2>
+          <picker topofstack="stack[stack.length - 1]" selectoption="selection"></picker>
+          <player-list listofplayers="playerList"></player-list>
         </div><!--End of First Column-->
+
         <div class="col-sm-4"><!--Second Column: Stack-->
           <game-stack ng-repeat="stackItem in stack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
         </div><!--End of Second Column-->
+
         <div class="col-sm-2"><!--Third Column: Users-->
-          <form ng-submit=''><!--Input directive-->
-            <div class="row">
-              <div class="col-xs-6">
-                <button class="btn-primary" ng-click="newGameStart()">New Game</button>
-              </div>
-              <div class="col-xs-6">
-                <button class="btn-primary" ng-click="gameSelect(game)">Join Game</button>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xs-6">
-                <select class="form-control" ng-model="game" ng-options="game as game.starting for game in gameList"></select>
-              </div>
-            </div>
-          </form><!--End of Input directive-->
+          <game-selector new="startNewGame()" gamelist="gameList" join="joinGame" adduser="createUsername" userentered="usernamePresent"></game-selector>
         </div><!--End of Third Column-->
+
         <div class="col-sm-3"><!--Fourth Column: Ads-->
           <span></span>
         </div><!--End of Fourth Column-->
+
       </div><!--End of Controller delclaration-->
     </div><!--End of Container-->
     <footer>
