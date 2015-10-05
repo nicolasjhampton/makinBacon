@@ -90,6 +90,9 @@
 
       $scope.usernamePresent = false;
 
+      // Shows or doesn't show our game elements
+      $scope.inGame = false;
+
       /**********************
         Socket listeners
        **********************/
@@ -107,12 +110,19 @@
        */
       socket.on('update', function(data){
 
+
+
+
         // Update our local stack variable in the scope
-        $scope.stack = data.game.stack;
+        $scope.game = data.game;
         $scope.gameID = data.game.gameID;
         console.log(Object.keys(data.game)[0]);
 
+        // This actually tests to see if we're in a game yet
         if(Object.keys(data.game)[0] !== undefined) {
+
+          // turns our game elements on
+          $scope.inGame = true;
 
           $scope.playerList = Object.keys(data.game.playerList).map(function(value) {
             return {name:value, score:data.game.playerList[value]};

@@ -295,11 +295,23 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
       if(data.type === "actors") {
 
         if(firstStackEmit === true) {
+
+          // If this is the first actor, points and credit go to no one
           var newActorObject = createActorObject(jsonObject, "start");
+
         } else {
-        // create the actor with complete movie credits info
+
+          // create the actor with complete movie credits info
           var newActorObject = createActorObject(jsonObject, data.player);
+
+          // Points rule ****
+          // add the 100 points to the score for that player
+          gameStack[data.gameID].playerList[data.player] += 100;
         }
+
+        // Game rule ****
+        // Incrementing the actor count
+        gameStack[data.gameID].actorCount += 1;
 
         // store this actor into the corresponding game in the gameStack
         gameStack[data.gameID].stack.push(newActorObject);
@@ -310,11 +322,15 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
         // create the movie with complete actor credits info
         var newMovieObject = createMovieObject(jsonObject, data.player);
 
+        // Points rule ****
+        // add the 100 points to the score for that player
+        gameStack[data.gameID].playerList[data.player] += 100;
+
         // store this movie into the corresponding game in the gameStack
         gameStack[data.gameID].stack.push(newMovieObject);
 
       }
-      console.log(data.gameID);
+
       // emit stack/input data to the gameID route
       sendStack(socket, data.gameID, firstStackEmit);
 
