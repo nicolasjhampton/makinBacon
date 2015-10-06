@@ -33,7 +33,7 @@
         <div class="col-sm-2"><!--Third Column: Users-->
           <h2 ng-show="!usernamePresent">Name:</h2>
           <h2 ng-show="usernamePresent">Games:</h2>
-          <game-selector new="startNewGame()" gamelist="gameList" join="joinGame" adduser="createUsername" userentered="usernamePresent"></game-selector>
+          <game-selector new="startNewGame()" username="username" gamelist="gameList" join="joinGame" adduser="createUsername" userentered="usernamePresent"></game-selector>
         </div><!--End of Third Column-->
 
         <div class="col-sm-3"><!--Fourth Column: Ads-->

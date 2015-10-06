@@ -1,7 +1,7 @@
-<div ng-hide="userentered">
-  <input class="form-control" type="text" ng-model="username">
-  <button class="btn-primary" ng-click="adduser(username)">Enter Name</button>
-</div>
+<form name="usernameForm" ng-submit="adduser()" ng-hide="userentered" novalidate>
+  <input name="usernameInput" class="form-control" type="text" ng-model="username" required/>
+  <input type="submit" value="Submit" class="btn-primary"/>
+</form>
 <div ng-show="userentered">
   <div class="row">
     <div class="col-xs-6">
@@ -14,6 +14,21 @@
   <div class="row">
     <div class="col-xs-12">
       <select class="form-control" ng-model="game" ng-options="game as game.starting for game in gamelist"></select>
+    </div>
+  </div>
+  <div ng-repeat="game in gamelist" class="row">
+    <div class="col-xs-12">
+      <p style="text-align:center"><b>Game:{{game.starting}}</b></p>
+      <div class="row">
+        <div class="col-xs-4">
+          <p><b>Players:</b></p>
+        </div>
+        <div class="col-xs-8">
+          <div ng-repeat="(key,value) in game.playerList">
+            <p>{{key}}: {{value}}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

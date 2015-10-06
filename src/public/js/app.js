@@ -40,7 +40,8 @@
               join: '=',
               adduser: '=',
               gamelist: '=',
-              userentered: '='
+              userentered: '=',
+              username: '='
             },
             templateUrl: './js/directives/_gameSelector.html'
           };
@@ -102,6 +103,7 @@
        */
       socket.on('gameList', function(data){
         $scope.gameList = data.gameList;
+        console.log(data.gameList);
         $scope.$digest();
       });
 
@@ -126,31 +128,23 @@
           console.log($scope.playerList)
         }
 
-
-
-        console.log($scope.playerList);
-
-        /*
-        var game = {
-          gameID: newGameID,
-          playerList:players,
-          actorCount: 0,
-          isBacon: false,
-          stack:[]
-        }
-        */
-        // Updates the view with new stack data
         $scope.$digest();
 
       }); // End of update socket listener
+
+      // This is an echo that causes all players in a room to emit
+      // a signal to the server to detach them from this room
+      socket.on('leaveroom', function() {
+        socket.emit('leaveroom', {ID:$scope.gameID});
+      });
 
       /**********************
         Buttons
       ***********************/
 
-      $scope.createUsername = function(username) {
-        $scope.username = username;
+      $scope.createUsername = function() {
         $scope.usernamePresent = true;
+        socket.emit('adduser', {username:$scope.username});
       };
 
       // Button to start a new game
@@ -161,7 +155,6 @@
 
       // Button to switch to another game
       $scope.joinGame = function (data) {
-        console.log(data);
         var message = {gameID:data.gameID, player:$scope.username};
         socket.emit('select game', message);
       };
@@ -180,7 +173,6 @@
                         id: data.id,
                       };
 
-        console.log(message);
         socket.emit('update', message);
 
       }; // End of emit update button

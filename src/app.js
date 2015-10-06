@@ -56,8 +56,8 @@ var gameNumber = 0;
 var getApiOptions = function (optionsRequest, idOrPage) {
 
   // our api key for api.themoviedb.org/3/
-  // do not include in our repo
-  var apiKey = 'aad65b32d0b325da9b0b9b9e33fcdaa6';
+  // Go get your own!
+  var apiKey = '';
 
   // Beginning Url for all api requests, using version 3 of api
   var apiUrl = 'https://api.themoviedb.org/3/';
@@ -117,9 +117,13 @@ var getApiOptions = function (optionsRequest, idOrPage) {
  */
 io.sockets.on('connect', function(socket) {
 
-  // Clear any old game from the browser, happens when server is restarted to everyone
-  // for the first game, the starting actor is going to be null, thus the or pipe in createGameList
-  newPlayerInit(socket);
+
+  socket.on('adduser', function(data){
+    // Clear any old game from the browser, happens when server is restarted to everyone
+    // for the first game, the starting actor is going to be null, thus the or pipe in createGameList
+    newPlayerInit(socket, data);
+
+  });
 
   /*
    * 'select game' : This socket receives the game
@@ -182,6 +186,13 @@ io.sockets.on('connect', function(socket) {
 
     }
   }); // end of 'update' socket
+
+  socket.on('leaveroom', function(data){
+
+    socket.leave(data.ID);
+
+  });
+
 }); // end of 'connect' socket
 
 
@@ -196,14 +207,15 @@ io.sockets.on('connect', function(socket) {
  */
 var sendStack = function(socket, ID, firstStackEmit) {
 
-  console.log(gameStack[ID].gameID);
-
   // Emit to all current connected players
   io.sockets.in(ID.toString()).emit('update', {game:gameStack[ID]});
 
-  // if this is a game just created, update everyone's game list
-  if(firstStackEmit) {
-    io.sockets.emit('gameList', {gameList:createGameList()});
+  // Used to emit this only on first game, but the game list wasn't updating
+  io.sockets.emit('gameList', {gameList:createGameList()});
+
+
+  if(gameStack[ID].actorCount === 7 || gameStack[ID].isBacon === true) {
+    removeGame(ID, socket);
   }
 
 };
@@ -211,7 +223,10 @@ var sendStack = function(socket, ID, firstStackEmit) {
 /*
  * This communication function is ran when a new browser arrives
  */
-var newPlayerInit = function(socket) {
+var newPlayerInit = function(socket, data) {
+
+  // stores the player name under the list of usernames active
+  socket.username = data.player;
 
   // Clear any old game in the browser
   socket.emit('update', {game:{}});
@@ -294,12 +309,12 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
       // test part one: if we asked for an actor
       if(data.type === "actors") {
 
-        if(firstStackEmit === true) {
+        if(firstStackEmit === true) { // If this is a new game
 
           // If this is the first actor, points and credit go to no one
           var newActorObject = createActorObject(jsonObject, "start");
 
-        } else {
+        } else { // else, this is a game in progress
 
           // create the actor with complete movie credits info
           var newActorObject = createActorObject(jsonObject, data.player);
@@ -307,7 +322,8 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
           // Points rule ****
           // add the 100 points to the score for that player
           gameStack[data.gameID].playerList[data.player] += 100;
-        }
+
+        } // end if (firstStackEmit)
 
         // Game rule ****
         // Incrementing the actor count
@@ -317,7 +333,7 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
         gameStack[data.gameID].stack.push(newActorObject);
 
       // test part two: if we asked for a movie
-    } else if(data.type === "movies") {
+      } else if(data.type === "movies") { // This is a movie, and thus a game in progress
 
         // create the movie with complete actor credits info
         var newMovieObject = createMovieObject(jsonObject, data.player);
@@ -329,14 +345,66 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
         // store this movie into the corresponding game in the gameStack
         gameStack[data.gameID].stack.push(newMovieObject);
 
-      }
+
+        // Variable to test the credits for bacon
+
+        var baconSearch = gameStack[data.gameID].stack[gameStack[data.gameID].stack.length - 1].credits;
+
+        console.log(baconSearch);
+
+        //we're going to text if kevin bacon is in this movie
+        for(var actor = 0; actor < baconSearch.length; actor++) {
+          console.log(actor);
+          console.log(4724);
+          if(baconSearch[actor].id === 4724) {
+
+            // Increase the actor count
+            gameStack[data.gameID].actorCount += 1;
+
+            // Add the extra Bacon points to the winner's score
+            gameStack[data.gameID].playerList[data.player] += 100;
+
+            // Push the final bacon to the stack
+            gameStack[data.gameID].stack.push({
+              player:data.player,
+              type: "actors",
+              name: "Kevin Bacon",
+              id: 4724,
+              poster: "http://image.tmdb.org/t/p/w92/p1uCaOjxSC1xS5TgmD4uloAkbLd.jpg",
+              credits: []
+            });
+
+            // set the game to won
+            gameStack[data.gameID].isBacon = true;
+
+            // break the loop
+            break;
+          }
+        }
+      } //end if(data.type is movies or actors)
 
       // emit stack/input data to the gameID route
       sendStack(socket, data.gameID, firstStackEmit);
 
-    }
+    } // end if(statusCode)
   });
 };
+
+/*************************
+  Game dynamics
+ *************************/
+
+ var removeGame = function(ID, socket) {
+
+   createGame(ID, 'deadGame');
+
+   io.sockets.emit('gameList', {gameList:createGameList()});
+
+   // Send out a roomwide leaveroom event, so that all sockets come back and
+   // leave the room
+   io.sockets.in(ID).emit('leaveroom');
+
+ }
 
 /*************************
   Object functions
@@ -357,7 +425,7 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
      };
      return game;
    });
-   console.log(gameList);
+
    // return game list
    return gameList;
 
@@ -379,30 +447,27 @@ var createGame = function (currentGameNumberIndex, startingPlayer) {
   // Create an object that has usernames for each key and
   // a score for each value
   var players = {};
-  players[startingPlayer] = 0;
 
-  /*
-    players = {
-      name1: score,
-      name2: score,
-      name3: score,
-      etc...
-    }
+  if(startingPlayer !== 'deadGame') {
+    players[startingPlayer] = 0;
+    // increment the global gameNumber index
+    gameNumber++;
+    var bacon = false;
+  } else {
+    players[startingPlayer] = 'Game Over';
+    var bacon = true;
   }
-  */
-  // increment the global gameNumber index
-  gameNumber++;
 
   // create a new game object
   var game = {
     gameID: newGameID,
     playerList:players,
     actorCount: 0,
-    isBacon: false,
+    isBacon: bacon,
     stack:[]
   }
 
-  console.log(game);
+
 
   // We're going to put the game we create at it's location
   // in the game stack that corresponds with it's gameID
@@ -412,7 +477,9 @@ var createGame = function (currentGameNumberIndex, startingPlayer) {
   // gameNumber to give a unique id to the next game,
   // then return the gameID of this game for reference.
 
-  return {gameID:newGameID, player:startingPlayer};
+  if(startingPlayer !== 'deadGame'){
+    return {gameID:newGameID, player:startingPlayer};
+  }
 };
 
 
