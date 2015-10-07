@@ -13,27 +13,27 @@
       <div class="row" ng-controller="MainCtrl as main"><!--Controller Declaration-->
 
         <div class="col-sm-3"><!--First Column: Input-->
-          <h2>{{ username }}</h2>
-          <picker ng-show="inGame" topofstack="game.stack[game.stack.length - 1]" selectoption="selection"></picker>
-          <player-list listofplayers="playerList"></player-list>
+          <h2>{{ main.username }}</h2>
+          <picker ng-show="main.inGame" topofstack="main.game.stack[main.game.stack.length - 1]" selectoption="main.selection"></picker>
+          <player-list listofplayers="main.playerList"></player-list>
         </div><!--End of First Column-->
 
         <div class="col-sm-4"><!--Second Column: Stack-->
-          <div class="row" ng-show="inGame">
+          <div class="row" ng-show="main.inGame">
             <div class="col-xs-9" style="text-align:left">
               <h3>Actors Left till Bacon:</h3>
             </div>
             <div class="col-xs-3" style="text-align:right">
-              <h3>{{7 - game.actorCount}}</h3>
+              <h3>{{7 - main.game.actorCount}}</h3>
             </div>
           </div>
-          <game-stack ng-repeat="stackItem in game.stack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
+          <game-stack ng-repeat="stackItem in main.game.stack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
         </div><!--End of Second Column-->
 
         <div class="col-sm-2"><!--Third Column: Users-->
-          <h2 ng-show="!usernamePresent">Name:</h2>
-          <h2 ng-show="usernamePresent">Games:</h2>
-          <game-selector new="startNewGame()" username="username" gamelist="gameList" join="joinGame" adduser="createUsername" userentered="usernamePresent"></game-selector>
+          <h2 ng-show="!main.usernamePresent">Name:</h2>
+          <h2 ng-show="main.usernamePresent">Games:</h2>
+          <game-selector new="main.startNewGame()" username="main.username" gamelist="main.gameList" join="main.joinGame" adduser="main.createUsername" userentered="main.usernamePresent"></game-selector>
         </div><!--End of Third Column-->
 
         <div class="col-sm-3"><!--Fourth Column: Ads-->
@@ -52,7 +52,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
     <script src="./js/app.js"></script>
   </body><!--End of App declaration-->

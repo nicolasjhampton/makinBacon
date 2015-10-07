@@ -84,25 +84,28 @@
     app.controller('MainCtrl', function($scope, socket){
 
       // Set the initial displayed option to empty
-      $scope.option = {id:"", name:"", type:""};
+      this.option = {id:"", name:"", type:""};
 
       // We start out without a gameID
-      $scope.gameID = "uninitialized";
+      this.gameID = "uninitialized";
 
-      $scope.usernamePresent = false;
+      this.usernamePresent = false;
 
       // Shows or doesn't show our game elements
-      $scope.inGame = false;
+      this.inGame = false;
 
       /**********************
         Socket listeners
        **********************/
 
+       // controller reference for our callbacks
+       var main = this;
+
       /*
        * 'gameList': socket listener for our list of current games
        */
       socket.on('gameList', function(data){
-        $scope.gameList = data.gameList;
+        main.gameList = data.gameList;
         console.log(data.gameList);
         $scope.$digest();
       });
@@ -113,19 +116,19 @@
       socket.on('update', function(data){
 
         // Update our local stack variable in the scope
-        $scope.game = data.game;
-        $scope.gameID = data.game.gameID;
+        main.game = data.game;
+        main.gameID = data.game.gameID;
 
         // This actually tests to see if we're in a game yet
         if(Object.keys(data.game)[0] !== undefined) {
 
           // turns our game elements on
-          $scope.inGame = true;
+          main.inGame = true;
 
-          $scope.playerList = Object.keys(data.game.playerList).map(function(value) {
+          main.playerList = Object.keys(data.game.playerList).map(function(value) {
             return {name:value, score:data.game.playerList[value]};
           });
-          console.log($scope.playerList)
+          console.log(main.playerList)
         }
 
         $scope.$digest();
@@ -135,40 +138,40 @@
       // This is an echo that causes all players in a room to emit
       // a signal to the server to detach them from this room
       socket.on('leaveroom', function() {
-        socket.emit('leaveroom', {ID:$scope.gameID});
+        socket.emit('leaveroom', {ID:main.gameID});
       });
 
       /**********************
         Buttons
       ***********************/
 
-      $scope.createUsername = function() {
-        $scope.usernamePresent = true;
-        socket.emit('adduser', {username:$scope.username});
+      this.createUsername = function() {
+        main.usernamePresent = true;
+        socket.emit('adduser', {username:main.username});
       };
 
       // Button to start a new game
-      $scope.startNewGame = function () {
-        var message = {gameID:'newGame', player:$scope.username};
+      this.startNewGame = function () {
+        var message = {gameID:'newGame', player:main.username};
         socket.emit('select game', message);
       };
 
       // Button to switch to another game
-      $scope.joinGame = function (data) {
-        var message = {gameID:data.gameID, player:$scope.username};
+      this.joinGame = function (data) {
+        var message = {gameID:data.gameID, player:main.username};
         socket.emit('select game', message);
       };
 
       // Button for emitting new stack addition
-      $scope.selection = function (data) {
+      this.selection = function (data) {
 
         // We're going to emit this to the always listening update
         // socket on the server, server will re-emit to our
         // specific room after changes
         // {gameID: index, player: (player who made choice, this client), type: ('movies' or 'actors'), id:(id of movie or actor) }
         var message = {
-                        gameID:$scope.gameID,
-                        player: $scope.username,
+                        gameID:main.gameID,
+                        player: main.username,
                         type: data.type,
                         id: data.id,
                       };

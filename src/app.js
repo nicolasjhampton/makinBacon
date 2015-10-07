@@ -467,6 +467,11 @@ var createGame = function (currentGameNumberIndex, startingPlayer) {
     stack:[]
   }
 
+  if(startingPlayer === 'deadGame') {
+    var deadStack = {name:'Game Over'};
+    game.stack[0] = deadStack;
+  }
+
 
 
   // We're going to put the game we create at it's location
