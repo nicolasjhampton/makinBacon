@@ -138,7 +138,7 @@ io.sockets.on('connect', function(socket) {
 
       // join a new private game room here
       socket.join(gameNumber.toString());
-
+      console.log(data.player);
       // Create a new game and pass the ID to first to start it
       first(socket, createGame(gameNumber, data.player));
     } else {
@@ -179,6 +179,8 @@ io.sockets.on('connect', function(socket) {
 
       // Set the options for the new api request
       var options = getApiOptions(data.type, data.id);
+
+      console.log('data recevied: ' + data.player);
 
       // we factored down data.gameID and data.type into data to include player data
       // call the database, create and store the actor, then emit the update
@@ -225,8 +227,9 @@ var sendStack = function(socket, ID, firstStackEmit) {
  */
 var newPlayerInit = function(socket, data) {
 
+  console.log(data.username);
   // stores the player name under the list of usernames active
-  socket.username = data.player;
+  socket.username = data.username;
 
   // Clear any old game in the browser
   socket.emit('update', {game:{}});
@@ -280,7 +283,7 @@ var first = function(socket, IDandPlayerObject) {
                                 player: IDandPlayerObject.player,
                                 type: "actors"
                               };
-
+                              console.log(IDPlayerAndTypeObject);
       // make normal database call for first actor's info
       // here we added a boolean value of firstStackEmit
       // so if it's the first recevied stack, it goes on the
@@ -341,6 +344,7 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
         // Points rule ****
         // add the 100 points to the score for that player
         gameStack[data.gameID].playerList[data.player] += 100;
+        console.log(gameStack[data.gameID].playerList[data.player]);
 
         // store this movie into the corresponding game in the gameStack
         gameStack[data.gameID].stack.push(newMovieObject);
@@ -350,12 +354,9 @@ var getDBInfo = function (options, socket, data, firstStackEmit) {
 
         var baconSearch = gameStack[data.gameID].stack[gameStack[data.gameID].stack.length - 1].credits;
 
-        console.log(baconSearch);
-
         //we're going to text if kevin bacon is in this movie
         for(var actor = 0; actor < baconSearch.length; actor++) {
-          console.log(actor);
-          console.log(4724);
+
           if(baconSearch[actor].id === 4724) {
 
             // Increase the actor count
@@ -483,6 +484,7 @@ var createGame = function (currentGameNumberIndex, startingPlayer) {
   // then return the gameID of this game for reference.
 
   if(startingPlayer !== 'deadGame'){
+    console.log({gameID:newGameID, player:startingPlayer});
     return {gameID:newGameID, player:startingPlayer};
   }
 };

@@ -1,13 +1,13 @@
 (function(){
 
   // Create app, attach all parts to variable
-  var app = angular.module("myApp", []);
+  var app = angular.module("myApp", ["myApp.factories"]);
 
     // simple socket.io service
-    app.factory('socket', function() {
-      var socket = io.connect();
-      return socket;
-    });
+    //app.factory('socket', function() {
+    //  var socket = io.connect();
+    //  return socket;
+    //});
 
     // Directive for our game input to choose a movie/actor
     app.directive('picker', function() {
@@ -15,9 +15,11 @@
             restrict: 'E',
             scope: {
               topofstack: '=topofstack',
-              selectoption: '='
+              username: '='
             },
-            templateUrl: './js/directives/_picker.html'
+            templateUrl: './js/directives/_picker.html',
+            controller: 'MainCtrl',
+            controllerAs: 'picker'
           };
       });
 
@@ -46,6 +48,16 @@
             templateUrl: './js/directives/_gameSelector.html'
           };
       });
+
+    app.directive('gameScore', function() {
+      return {
+        restrict: 'E',
+        scope: {
+          count: '='
+        },
+        templateUrl: './js/directives/_gameScore.html'
+      }
+    });
 
     // Directive for each item in the gameStack
     app.directive('gameStack', function() {
@@ -83,6 +95,8 @@
     // Controller for the input and stack display
     app.controller('MainCtrl', function($scope, socket){
 
+      this.username = "";
+
       // Set the initial displayed option to empty
       this.option = {id:"", name:"", type:""};
 
@@ -93,6 +107,8 @@
 
       // Shows or doesn't show our game elements
       this.inGame = false;
+
+
 
       /**********************
         Socket listeners
@@ -145,8 +161,10 @@
         Buttons
       ***********************/
 
-      this.createUsername = function() {
+      this.createUsername = function(username) {
+        socket.username = username;
         main.usernamePresent = true;
+        console.log(socket.username);
         socket.emit('adduser', {username:main.username});
       };
 
@@ -164,20 +182,21 @@
 
       // Button for emitting new stack addition
       this.selection = function (data) {
-
         // We're going to emit this to the always listening update
         // socket on the server, server will re-emit to our
         // specific room after changes
         // {gameID: index, player: (player who made choice, this client), type: ('movies' or 'actors'), id:(id of movie or actor) }
         var message = {
-                        gameID:main.gameID,
-                        player: main.username,
+                        gameID: main.gameID,
+                        player: socket.username,
                         type: data.type,
                         id: data.id,
                       };
-
+        console.log(socket.username);
         socket.emit('update', message);
 
       }; // End of emit update button
+
+
     }); // End of controller
 })();
