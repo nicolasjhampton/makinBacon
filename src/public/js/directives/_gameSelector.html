@@ -1,14 +1,10 @@
-<form name="usernameForm" ng-submit="usernameForm.$valid && adduser(username)" ng-hide="userentered" novalidate>
-  <input name="usernameInput" class="form-control" type="text" ng-model="username" required/>
-  <input type="submit" value="Submit" class="btn-primary"/>
-</form>
-<div ng-show="userentered">
+<div>
   <div class="row">
     <div class="col-xs-6">
-      <button class="btn-primary" ng-click="new()">New Game</button>
+      <button class="btn-primary" ng-click="gameSelector.startNewGame()">New Game</button>
     </div>
     <div class="col-xs-6">
-      <button class="btn-primary" ng-click="join(game)">Join Game</button>
+      <button class="btn-primary" ng-click="gameSelector.joinGame(game)">Join Game</button>
     </div>
   </div>
   <div class="row">

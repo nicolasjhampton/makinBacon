@@ -15,7 +15,7 @@
         <!--First Column: Input-->
         <div class="col-sm-3">
           <h2>{{ main.username }}</h2>
-          <picker ng-show="main.inGame" topofstack="main.game.stack[main.game.stack.length - 1]" username="main.username"></picker>
+          <picker ng-show="main.inGame" gameid="main.gameID" nextcredits="main.nextcredits"></picker>
           <player-list listofplayers="main.playerList"></player-list>
         </div><!--End of First Column-->
 
@@ -27,9 +27,8 @@
 
         <!--Third Column: Users-->
         <div class="col-sm-2">
-          <h2 ng-show="!main.usernamePresent">Name:</h2>
-          <h2 ng-show="main.usernamePresent">Games:</h2>
-          <game-selector new="main.startNewGame()" username="main.username" gamelist="main.gameList" join="main.joinGame" adduser="main.createUsername" userentered="main.usernamePresent"></game-selector>
+          <username-input username="main.username" ng-show="!main.usernamePresent"></username-input>
+          <game-selector  ng-show="main.usernamePresent" gamelist="main.gameList"></game-selector>
         </div><!--End of Third Column-->
 
         <!--Fourth Column: Ads-->
