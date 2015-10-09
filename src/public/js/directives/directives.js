@@ -10,7 +10,7 @@ app.directive('picker', function() {
           nextcredits: '=',
           gameid: '='
         },
-        templateUrl: './js/directives/_picker.html',
+        templateUrl: './js/directives/partials/_picker.html',
         controller: function (socket) {
 
           // Button for emitting new stack addition
@@ -41,7 +41,7 @@ app.directive('playerList', function() {
         scope: {
           listofplayers: '='
         },
-        templateUrl: './js/directives/_playerList.html'
+        templateUrl: './js/directives/partials/_playerList.html'
       };
   });
 
@@ -51,7 +51,7 @@ app.directive('usernameInput', function() {
         scope:{
           username: '='
         },
-        templateUrl: './js/directives/_usernameInput.html',
+        templateUrl: './js/directives/partials/_usernameInput.html',
         controller: function (socket) {
 
           this.createUsername = function(username) {
@@ -71,7 +71,7 @@ app.directive('gameSelector', function() {
         scope: {
           gamelist: '='
         },
-        templateUrl: './js/directives/_gameSelector.html',
+        templateUrl: './js/directives/partials/_gameSelector.html',
         controller: function (socket) {
 
           // Button to start a new game
@@ -97,7 +97,7 @@ app.directive('gameScore', function() {
     scope: {
       count: '='
     },
-    templateUrl: './js/directives/_gameScore.html'
+    templateUrl: './js/directives/partials/_gameScore.html'
   }
 });
 
@@ -110,7 +110,7 @@ app.directive('gameStack', function() {
           first: '=first',
           last: '=last'
         },
-        templateUrl: './js/directives/_gameStack.html',
+        templateUrl: './js/directives/partials/_gameStack.html',
         link: function(scope) {
 
           // This decided how each stackitem is laid out
