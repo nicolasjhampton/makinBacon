@@ -5,16 +5,6 @@
   // Controller for the input and stack display
   app.controller('MainCtrl', function($scope, socket){
 
-    /*
-    this.username = "";
-
-    // Set the initial displayed option to empty
-    this.option = {id:"", name:"", type:""};
-
-    // We start out without a gameID
-    this.gameID = "uninitialized";
-    */
-
     this.usernamePresent = false;
 
     // Shows or doesn't show our game elements
@@ -29,13 +19,18 @@
      // controller reference for our callbacks
      var main = this;
 
-    /*
-     * 'gameList': socket listener for our list of current games
-     */
-    socket.on('gameList', function(data){
-      main.usernamePresent = true;
+
+    socket.on('init', function(data){
+
+      main.game = data.game;
       main.gameList = data.gameList;
-      console.log(data.gameList);
+      main.username = data.username;
+      $scope.$digest();
+
+    });
+
+    socket.on('gameList', function(data){
+      main.gameList = data.gameList;
       $scope.$digest();
     });
 

@@ -1,28 +1,22 @@
 <div>
-  <div class="row">
-    <div class="col-xs-6">
-      <button class="btn-primary" ng-click="gameSelector.startNewGame()">New Game</button>
-    </div>
-    <div class="col-xs-6">
-      <button class="btn-primary" ng-click="gameSelector.joinGame(game)">Join Game</button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <select class="form-control" ng-model="game" ng-options="game as game.starting for game in gamelist|filter:{starting:'!Game Over'}"></select>
-    </div>
-  </div>
-  <div ng-repeat="game in gamelist" class="row">
-    <div ng-hide="game.starting === 'Game Over'" class="col-xs-12">
-      <p style="text-align:center"><b>Game:{{game.starting}}</b></p>
-      <div class="row">
-        <div class="col-xs-4">
+  <button ng-click="gameSelector.startNewGame()">New Game</button>
+  <button ng-click="gameSelector.joinGame(game)">Join Game</button>
+</div>
+<div>
+  <select ng-model="game" ng-options="game as game.starting for game in gamelist|filter:{starting:'!Game Over'}"></select>
+</div>
+<div class="gameContainer">
+  <div class="gamelist">
+    <div class="games" ng-repeat="game in gamelist" ng-hide="game.starting === 'Game Over'">
+      <div>
+        <p><b>{{game.starting}}</b></p>
+      </div>
+      <div>
+        <div>
           <p><b>Players:</b></p>
         </div>
-        <div class="col-xs-8">
-          <div ng-repeat="(key,value) in game.playerList">
-            <p>{{key}}: {{value}}</p>
-          </div>
+        <div ng-repeat="(key,value) in game.playerList">
+          <p>{{key}}: {{value}}</p>
         </div>
       </div>
     </div>

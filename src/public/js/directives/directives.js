@@ -39,6 +39,7 @@ app.directive('playerList', function() {
       return {
         restrict: 'E',
         scope: {
+          count: '=',
           listofplayers: '='
         },
         templateUrl: './js/directives/partials/_playerList.html'
@@ -48,9 +49,7 @@ app.directive('playerList', function() {
 app.directive('usernameInput', function() {
       return {
         restrict: 'E',
-        scope:{
-          username: '='
-        },
+        scope:{},
         templateUrl: './js/directives/partials/_usernameInput.html',
         controller: function (socket) {
 
@@ -91,16 +90,6 @@ app.directive('gameSelector', function() {
       };
   });
 
-app.directive('gameScore', function() {
-  return {
-    restrict: 'E',
-    scope: {
-      count: '='
-    },
-    templateUrl: './js/directives/partials/_gameScore.html'
-  }
-});
-
 // Directive for each item in the gameStack
 app.directive('gameStack', function() {
       return {
@@ -115,8 +104,8 @@ app.directive('gameStack', function() {
 
           // This decided how each stackitem is laid out
           if(scope.stackitem.type === 'actors') {
-            scope.push = "";
-            scope.pull = "text-align";
+            scope.text = "right";
+            scope.image = "left";
             if(scope.first) {
               scope.subtitle = "was in...";
             } else if(scope.last){
@@ -125,8 +114,8 @@ app.directive('gameStack', function() {
               scope.subtitle = "who was in...";
             }
           } else if(scope.stackitem.type === 'movies') {
-            scope.push = "col-xs-push-9";
-            scope.pull = "col-xs-pull-3";
+            scope.text = "left";
+            scope.image = "right";
             scope.subtitle = "with..."
           }
 

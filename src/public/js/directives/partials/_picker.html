@@ -1,2 +1,6 @@
-<select class="form-control" ng-model="option" ng-options="option as option.name for option in nextcredits | orderBy:'+name'"></select>
-<button class="btn-primary" ng-click="picker.selection(option, gameid)">Submit</button>
+<div>
+  <select ng-model="option" ng-options="option as option.name for option in nextcredits | orderBy:'+name'"></select>
+</div>
+<div>
+  <button ng-click="picker.selection(option, gameid)">Submit</button>
+</div>

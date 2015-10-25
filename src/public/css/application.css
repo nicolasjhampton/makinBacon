@@ -1,0 +1,325 @@
+/*************************
+  body
+**************************/
+.stackImg {
+  max-width: 92px;
+  max-height: 132px; }
+
+/*************************
+  variables
+**************************/
+/*************************
+  mixins
+**************************/
+/*************************
+  game
+**************************/
+select, button {
+  width: 100%; }
+
+username-input {
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%; }
+  username-input form {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%; }
+    username-input form input[type="text"] {
+      background: white;
+      height: 40px;
+      align-self: stretch;
+      border: solid 5px #da9fda;
+      border-radius: 5px;
+      flex: 1;
+      height: 40px;
+      justify-content: stretch;
+      align-self: stretch;
+      box-shadow: inset 0 1px 3px black;
+      text-align: center;
+      font-size: 1.3em; }
+      username-input form input[type="text"]:hover {
+        cursor: pointer;
+        background: #da9fda;
+        border: solid 5px white; }
+    username-input form input[type="submit"] {
+      background: #CC7ACC;
+      height: 40px;
+      align-self: stretch;
+      border: solid 5px #da9fda;
+      border-radius: 5px;
+      flex: 1;
+      height: 40px;
+      justify-content: stretch;
+      align-self: stretch; }
+      username-input form input[type="submit"]:hover {
+        cursor: pointer;
+        background: #da9fda;
+        border: solid 5px #CC7ACC; }
+
+game-selector {
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%; }
+  game-selector > div {
+    /* button/list layout*/
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    margin-bottom: 8px; }
+    game-selector > div > button {
+      background: #CC7ACC;
+      height: 40px;
+      align-self: stretch;
+      border: solid 5px #da9fda;
+      border-radius: 5px;
+      flex: 1;
+      height: 40px;
+      justify-content: stretch;
+      align-self: stretch;
+      margin-top: 0; }
+      game-selector > div > button:hover {
+        cursor: pointer;
+        background: #da9fda;
+        border: solid 5px #CC7ACC; }
+    game-selector > div > select {
+      align-self: stretch;
+      flex: 1;
+      height: 40px;
+      background: #da9fda;
+      border: solid 5px #CC7ACC; }
+
+.gameContainer {
+  align-self: stretch;
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  background: #da9fda;
+  border-radius: 5px; }
+
+.gamelist {
+  /* row of games */
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  align-self: flex-start;
+  justify-content: space-around;
+  padding-bottom: 100%; }
+  .gamelist .games {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    background: #da9fda;
+    border-radius: 5px;
+    border: solid 5px #CC7ACC;
+    margin: 2.5%;
+    width: 40%;
+    text-align: center; }
+    .gamelist .games > div {
+      display: flex;
+      flex-flow: column wrap;
+      width: 100%;
+      color: white;
+      flex: 1; }
+
+.game-score :first-child {
+  margin-right: auto;
+  text-align: left;
+  align-self: flex-start; }
+.game-score :last-child {
+  margin-left: auto;
+  text-align: right;
+  align-self: flex-end; }
+
+game-stack {
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  border-radius: 5px;
+  background: white;
+  border: solid 5px #CC7ACC;
+  max-width: 100%;
+  margin-bottom: 8px;
+  align-items: center; }
+  @media only screen and (min-width: 1024px) {
+    game-stack {
+      max-width: 90%; } }
+  game-stack .card {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    margin: 0px 5px 0px 5px;
+    border-radius: 5px;
+    background: #da9fda;
+    border: solid 5px #CC7ACC;
+    border-radius: 0;
+    align-content: space-between;
+    flex-wrap: nowrap; }
+    game-stack .card h2, game-stack .card p {
+      padding: 0 8px; }
+  game-stack .right {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    order: 2;
+    width: auto;
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right; }
+  game-stack .left {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    order: 1;
+    width: auto;
+    margin-right: auto;
+    align-items: flex-start;
+    text-align: left; }
+  game-stack .player-label {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    align-content: center;
+    text-align: center;
+    border-radius: 5px;
+    background: white;
+    border: solid 5px #CC7ACC;
+    border-radius: 0; }
+    game-stack .player-label p {
+      width: 100%; }
+
+picker {
+  width: 100%;
+  align-content: center;
+  text-align: center; }
+  picker > div {
+    background: #CC7ACC;
+    height: 40px;
+    align-self: stretch;
+    border: solid 5px #da9fda;
+    border-radius: 5px;
+    flex: 1;
+    height: 40px;
+    justify-content: stretch;
+    align-self: stretch;
+    width: 100%;
+    margin-top: 8px; }
+    picker > div:hover {
+      cursor: pointer;
+      background: #da9fda;
+      border: solid 5px #CC7ACC; }
+    picker > div:hover {
+      border: solid 5px #da9fda; }
+    @media only screen and (min-width: 768px) {
+      picker > div {
+        margin-top: 0px; } }
+  picker select {
+    border: solid 5px transparent;
+    border-radius: 0px;
+    background: transparent;
+    height: 40px;
+    width: 100%; }
+    picker select:hover {
+      border: solid 5px #da9fda; }
+  picker button {
+    border: solid 5px transparent;
+    border-radius: 0px;
+    background: transparent;
+    height: 40px;
+    width: 100%; }
+    picker button:hover {
+      border: solid 5px #da9fda; }
+  @media only screen and (max-width: 768px) {
+    picker {
+      order: 2;
+      margin: 0 0; } }
+
+player-list {
+  margin: 8px 0;
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  width: 100%;
+  background: #da9fda;
+  border-radius: 5px;
+  border: solid 5px #CC7ACC; }
+  player-list div {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    justify-content: center; }
+    player-list div h3 {
+      line-height: .5em;
+      padding-left: 5%;
+      padding-right: 5%; }
+  @media only screen and (max-width: 768px) {
+    player-list {
+      order: 1;
+      margin: 0 0; } }
+
+.page {
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  align-content: stretch;
+  width: 95%;
+  margin: 2.5%; }
+  @media only screen and (min-width: 768px) {
+    .page {
+      align-content: space-between;
+      display: flex;
+      flex-flow: row wrap;
+      width: 100%;
+      width: 95%; } }
+  @media only screen and (min-width: 1024px) {
+    .page {
+      align-content: space-between; } }
+
+.first,
+.second,
+.third {
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
+  flex: auto; }
+  @media only screen and (min-width: 768px) {
+    .first,
+    .second,
+    .third {
+      max-width: 40%; } }
+
+.first {
+  align-items: stretch; }
+  @media only screen and (max-width: 768px) {
+    .first {
+      /*@include flex-box(row);
+      justify-content: space-around;
+      align-content: stretch; */
+      margin-bottom: 5px; } }
+  @media only screen and (min-width: 768px) {
+    .first {
+      max-width: 43%;
+      margin-right: 2%; } }
+  @media only screen and (min-width: 1024px) {
+    .first {
+      max-width: 20%; } }
+
+.second {
+  align-items: stretch; }
+  @media only screen and (min-width: 768px) {
+    .second {
+      max-width: 55%; } }
+  @media only screen and (min-width: 1024px) {
+    .second {
+      max-width: 45%; } }
+
+.third {
+  align-self: stretch; }
+  @media only screen and (min-width: 768px) {
+    .third {
+      max-width: 100%; } }
+  @media only screen and (min-width: 1024px) {
+    .third {
+      max-width: 30%; } }
+
+/*# sourceMappingURL=application.css.map */

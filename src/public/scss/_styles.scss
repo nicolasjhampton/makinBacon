@@ -1,0 +1,330 @@
+/*************************
+  body
+**************************/
+
+.stackImg {
+  max-width: 92px;
+  max-height:132px
+}
+
+/*************************
+  variables
+**************************/
+
+$primary : #CC7ACC;
+$secondary : lighten($primary, 10%);
+
+/*************************
+  mixins
+**************************/
+
+@mixin flex-box($direction) {
+  display: flex;
+  flex-flow: $direction wrap;
+  width: 100%;
+}
+
+@mixin borderAndBack($bg, $border) {
+  border-radius: 5px;
+  background: $bg;
+  border: solid 5px $border;
+}
+
+@mixin game-button($bg, $border){
+  background: $bg;
+  height: 40px;
+  align-self: stretch;
+  border: solid 5px $border;
+  border-radius: 5px;
+  flex: 1;
+  height: 40px;
+  justify-content: stretch;
+  align-self: stretch;
+
+  &:hover {
+    cursor: pointer;
+    background: $border;
+    border: solid 5px $bg;
+  }
+}
+
+@mixin select-box {
+  align-self: stretch;
+  flex: 1;
+  height: 40px;
+  background: $secondary;
+  border: solid 5px $primary;
+}
+
+/*************************
+  game
+**************************/
+
+select, button {
+  width: 100%;
+}
+
+username-input {
+  @include flex-box(column);
+
+  form {
+    @include flex-box(column);
+
+    input[type="text"] {
+      @include game-button(white, $secondary);
+      box-shadow: inset 0 1px 3px black;
+      text-align: center;
+      font-size: 1.3em;
+    }
+
+    input[type="submit"] {
+      @include game-button($primary, $secondary);
+    }
+  }
+}
+
+game-selector {
+  @include flex-box(column);
+
+  > div {
+    /* button/list layout*/
+    @include flex-box(row);
+    margin-bottom: 8px;
+
+    > button {
+      @include game-button($primary, $secondary);
+      margin-top: 0;
+    }
+
+    > select {
+      @include select-box;
+    }
+  }
+}
+
+.gameContainer {
+  align-self: stretch;
+  @include flex-box(column);
+  background: $secondary;
+  border-radius: 5px;
+}
+
+.gamelist {
+    /* row of games */
+    @include flex-box(row);
+    align-self: flex-start;
+    justify-content: space-around;
+    padding-bottom: 100%;
+
+  .games {
+    @include flex-box(column);
+    background: $secondary;
+    border-radius: 5px;
+    border: solid 5px $primary;
+    margin: 2.5%;
+    width: 40%;
+    text-align: center;
+
+    > div {
+      @include flex-box(column);
+      color: white;
+      flex: 1;
+    }
+  }
+}
+
+.game-score {
+  :first-child {
+    margin-right: auto;
+    text-align: left;
+    align-self: flex-start;
+  }
+  :last-child {
+    margin-left: auto;
+    text-align: right;
+    align-self: flex-end;
+  }
+}
+
+game-stack {
+  @include flex-box(column);
+  @include borderAndBack(white, $primary);
+  max-width: 100%;
+  margin-bottom: 8px;
+  align-items: center;
+
+  @media only screen and (min-width: 1024px) {
+    max-width: 90%;
+  }
+
+  .card {
+    @include flex-box(row);
+    margin: 0px 5px 0px 5px;
+    @include borderAndBack($secondary, $primary);
+    border-radius: 0;
+    align-content: space-between;
+    flex-wrap: nowrap;
+    h2, p {
+      padding: 0 8px;
+    }
+  }
+  .right {
+    @include flex-box(column);
+    order: 2;
+    width: auto;
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right;
+
+  }
+  .left {
+    @include flex-box(column);
+    order: 1;
+    width: auto;
+    margin-right: auto;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .player-label {
+    @include flex-box(row);
+    align-content: center;
+    text-align: center;
+    @include borderAndBack(white, $primary);
+    border-radius: 0;
+    p {
+      width: 100%;
+    }
+  }
+}
+
+picker {
+  width: 100%;
+  align-content: center;
+
+  > div {
+    @include game-button($primary, $secondary);
+    width: 100%;
+    margin-top: 8px;
+    &:hover {
+      border: solid 5px $secondary;
+    }
+    @media only screen and (min-width: 768px) {
+      margin-top: 0px;
+    }
+  }
+  select {
+    border: solid 5px transparent;
+    border-radius: 0px;
+    background: transparent;
+    height: 40px;
+    width: 100%;
+    &:hover {
+      border: solid 5px $secondary;
+    }
+  }
+  button {
+    border: solid 5px transparent;
+    border-radius: 0px;
+    background: transparent;
+    height: 40px;
+    width: 100%;
+    &:hover {
+      border: solid 5px $secondary;
+    }
+  }
+  text-align: center;
+  @media only screen and (max-width: 768px) {
+    order: 2;
+    margin: 0 0;
+  }
+}
+
+
+player-list {
+  margin: 8px 0;
+  @include flex-box(column);
+  width: 100%;
+  background: $secondary;
+  border-radius: 5px;
+  border: solid 5px $primary;
+  div {
+    @include flex-box(row);
+    justify-content: center;
+    h3 {
+      line-height: .5em;
+      padding-left: 5%;
+      padding-right: 5%;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    order: 1;
+    margin: 0 0;
+  }
+}
+
+
+
+
+.page {
+  @include flex-box(column);
+  align-content: stretch;
+  width: 95%;
+  margin: 2.5%;
+
+  @media only screen and (min-width: 768px) {
+    align-content: space-between;
+    @include flex-box(row);
+    width: 95%;
+  }
+  @media only screen and (min-width: 1024px) {
+    align-content: space-between;
+  }
+}
+
+
+.first,
+.second,
+.third {
+  @include flex-box(column);
+  flex: auto;
+  @media only screen and (min-width: 768px) {
+    max-width: 40%;
+  }
+}
+
+.first {
+  align-items: stretch;
+  @media only screen and (max-width: 768px) {
+    /*@include flex-box(row);
+    justify-content: space-around;
+    align-content: stretch; */
+    margin-bottom: 5px;
+  }
+  @media only screen and (min-width: 768px) {
+    max-width: 43%;
+    margin-right: 2%;
+  }
+  @media only screen and (min-width: 1024px) {
+    max-width: 20%;
+  }
+}
+
+.second {
+  align-items: stretch;
+  @media only screen and (min-width: 768px) {
+    max-width: 55%;
+  }
+  @media only screen and (min-width: 1024px) {
+    max-width: 45%;
+  }
+}
+
+.third {
+  align-self: stretch;
+  @media only screen and (min-width: 768px) {
+    max-width: 100%;
+  }
+  @media only screen and (min-width: 1024px) {
+    max-width: 30%;
+  }
+}

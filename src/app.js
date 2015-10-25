@@ -101,6 +101,8 @@ var startNewGame = function (data, socket) {
   // create game and attach needed info to data object
   data['gameID'] = createGame(data.player);
   data['type'] = "actors";
+  data['firstStackEmit'] = true;
+
 
   // join a new private game room here
   socket.join(data.gameID);
@@ -169,11 +171,13 @@ var newPlayerInit = function(socket, data) {
   // stores the player name under the list of usernames active
   socket.username = data.username;
 
-  // Clear any old game in the browser
-  socket.emit('update', {game:{}});
+  socket.emit('init', {game:{} ,gameList:createGameList(), username:socket.username});
+
+  // Clear any old game in the browser, give username
+  //socket.emit('update', {game:{}, username:socket.username});
 
   // create and emit a current list of games, then wait for selection
-  socket.emit('gameList', {gameList:createGameList()});
+  //socket.emit('gameList', {gameList:createGameList()});
 
 };
 
@@ -219,7 +223,7 @@ var removeGame = function(ID) {
 
 var createFirstStackObject = function (jsonObject, data) {
 
-  addActorToStack(jsonObject, data, true);
+  addActorToStack(jsonObject, data);
 
   return data;
 
@@ -243,23 +247,18 @@ var createStackObject = function(jsonObject, data) {
 
 };
 
-var addActorToStack = function(jsonObject, data, firstStackEmit) {
+var addActorToStack = function(jsonObject, data) {
 
-  if(firstStackEmit === true) { // If this is a new game
+  // If this is the first actor, points and credit go to no one
+  var newActorObject = createActorObject(jsonObject, data);
 
-    // If this is the first actor, points and credit go to no one
-    var newActorObject = createActorObject(jsonObject, "start");
-
-  } else { // else, this is a game in progress
-
-    // create the actor with complete movie credits info
-    var newActorObject = createActorObject(jsonObject, data.player);
+  if(data.firstStackEmit !== true) { // If this is a new game
 
     // Points rule ****
     // add the 100 points to the score for that player
     gameStack[data.gameID].playerList[data.player] += 100;
 
-  } // end if (firstStackEmit)
+  }
 
   // Game rule ****
   // Incrementing the actor count
@@ -273,12 +272,11 @@ var addActorToStack = function(jsonObject, data, firstStackEmit) {
 var addMovieToStack = function(jsonObject, data) {
 
     // create the movie with complete actor credits info
-    var newMovieObject = createMovieObject(jsonObject, data.player);
+    var newMovieObject = createMovieObject(jsonObject, data);
 
     // Points rule ****
     // add the 100 points to the score for that player
     gameStack[data.gameID].playerList[data.player] += 100;
-    console.log(gameStack[data.gameID].playerList[data.player]);
 
     // store this movie into the corresponding game in the gameStack
     gameStack[data.gameID].stack.push(newMovieObject);
@@ -306,7 +304,7 @@ var checkBacon = function (data) {
       gameStack[ID].playerList[player] += 100;
 
       // Push the final bacon to the stack
-      gameStack[ID].stack.push(returnBacon);
+      gameStack[ID].stack.push(returnBacon(data));
 
       // set the game to won
       gameStack[ID].isBacon = true;
@@ -320,11 +318,12 @@ var checkBacon = function (data) {
 
 };
 
-var returnBacon = function (player) {
+var returnBacon = function (data) {
 
  // Winning object of the game
  var kevinBacon = {
-   player:player,
+   gameID: data.gameID,
+   player:data.player,
    type: "actors",
    name: "Kevin Bacon",
    id: 4724,
@@ -491,7 +490,7 @@ var createGame = function (startingPlayer) {
  */
 
 // creates a movie stack object
-var createMovieObject = function(jsonObject, player) {
+var createMovieObject = function(jsonObject, data) {
 
   // pull the movie data we need from the response
   var movieTitle = jsonObject.original_title;
@@ -513,7 +512,8 @@ var createMovieObject = function(jsonObject, player) {
 
   // make a singular reference for this movie
   var newMovieObject = {
-    player:player,
+    gameID: data.gameID,
+    player: data.player,
     type: "movies",
     name: movieTitle,
     id: movieID,
@@ -527,7 +527,7 @@ var createMovieObject = function(jsonObject, player) {
 };
 
 // Creates an actor stack object
-var createActorObject = function(jsonObject, player) {
+var createActorObject = function(jsonObject, data) {
 
   // store details for the chosen actor
   var actorName = jsonObject.name;
@@ -551,7 +551,8 @@ var createActorObject = function(jsonObject, player) {
 
   // make a singular reference object for this actor
   var newActorObject = {
-    player:player,
+    gameID: data.gameID,
+    player: data.firstStackEmit ? "start" : data.player,
     type: "actors",
     name: actorName,
     id: actorID,
