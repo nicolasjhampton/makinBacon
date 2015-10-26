@@ -56,6 +56,35 @@ $secondary : lighten($primary, 10%);
   border: solid 5px $primary;
 }
 
+@mixin selectButton($width) {
+  select,
+  button {
+    border: solid 5px $secondary;
+    border-radius: 0px;
+    background: $secondary;
+    height: 40px;
+    width: $width;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+@mixin buttonContainer($width) {
+  margin-top: 8px;
+  > div {
+    background: $secondary;
+    border: solid 5px $primary;
+    border-radius: 5px;
+    width: $width;
+    &:hover {
+      border: solid 5px $secondary;
+    }
+    @media only screen and (min-width: 768px) {
+      margin-top: 0px;
+    }
+  }
+}
 /*************************
   game
 **************************/
@@ -85,36 +114,37 @@ username-input {
 
 game-selector {
   @include flex-box(column);
-
-  > div {
-    /* button/list layout*/
-    @include flex-box(row);
-    margin-bottom: 8px;
-
-    > button {
-      @include game-button($primary, $secondary);
-      margin-top: 0;
-    }
-
-    > select {
-      @include select-box;
-    }
+  .selectGame {
+    @include flex-box(column);
+    @include buttonContainer(100%);
+    @include selectButton(100%);
   }
-}
+  .gameButtons {
+    @include flex-box(row);
+    border: solid 5px #CC7aCC;
+    border-radius: 5px;
+    background-color: #cc7acc;
+    justify-content: center;
+    @include buttonContainer(47%);
+    @include selectButton(100%);
+  }
+  .gameContainer {
+    padding-bottom: 100%;
+  }
 
-.gameContainer {
-  align-self: stretch;
-  @include flex-box(column);
-  background: $secondary;
-  border-radius: 5px;
 }
 
 .gamelist {
+    margin-top: 8px;
     /* row of games */
     @include flex-box(row);
-    align-self: flex-start;
-    justify-content: space-around;
-    padding-bottom: 100%;
+    justify-content: space-between;
+    align-content: flex-start;
+    height: auto;
+    width: 100%;
+    background: $secondary;
+    border-radius: 5px;
+    border: solid 5px $primary;
 
   .games {
     @include flex-box(column);
@@ -122,7 +152,7 @@ game-selector {
     border-radius: 5px;
     border: solid 5px $primary;
     margin: 2.5%;
-    width: 40%;
+    width: 42%;
     text-align: center;
 
     > div {
@@ -134,6 +164,7 @@ game-selector {
 }
 
 .game-score {
+  margin-top: 8px;
   :first-child {
     margin-right: auto;
     text-align: left;
@@ -150,11 +181,11 @@ game-stack {
   @include flex-box(column);
   @include borderAndBack(white, $primary);
   max-width: 100%;
-  margin-bottom: 8px;
+  margin-top: 8px;
   align-items: center;
 
   @media only screen and (min-width: 1024px) {
-    max-width: 90%;
+    max-width: 96%;
   }
 
   .card {
@@ -198,50 +229,17 @@ game-stack {
 }
 
 picker {
-  width: 100%;
-  align-content: center;
-
-  > div {
-    @include game-button($primary, $secondary);
-    width: 100%;
-    margin-top: 8px;
-    &:hover {
-      border: solid 5px $secondary;
-    }
-    @media only screen and (min-width: 768px) {
-      margin-top: 0px;
-    }
-  }
-  select {
-    border: solid 5px transparent;
-    border-radius: 0px;
-    background: transparent;
-    height: 40px;
-    width: 100%;
-    &:hover {
-      border: solid 5px $secondary;
-    }
-  }
-  button {
-    border: solid 5px transparent;
-    border-radius: 0px;
-    background: transparent;
-    height: 40px;
-    width: 100%;
-    &:hover {
-      border: solid 5px $secondary;
-    }
-  }
-  text-align: center;
-  @media only screen and (max-width: 768px) {
-    order: 2;
-    margin: 0 0;
+  margin-top: 8px;
+  @include buttonContainer(100%);
+  @include selectButton(100%);
+  @media only screen and (min-width: 768px) {
+    order: 1;
   }
 }
 
 
 player-list {
-  margin: 8px 0;
+  margin: 8px 0 0 0;
   @include flex-box(column);
   width: 100%;
   background: $secondary;
@@ -256,9 +254,8 @@ player-list {
       padding-right: 5%;
     }
   }
-  @media only screen and (max-width: 768px) {
-    order: 1;
-    margin: 0 0;
+  @media only screen and (min-width: 768px) {
+    order: 2;
   }
 }
 
@@ -269,7 +266,7 @@ player-list {
   @include flex-box(column);
   align-content: stretch;
   width: 95%;
-  margin: 2.5%;
+  margin: 0 2.5%;
 
   @media only screen and (min-width: 768px) {
     align-content: space-between;
@@ -294,18 +291,11 @@ player-list {
 
 .first {
   align-items: stretch;
-  @media only screen and (max-width: 768px) {
-    /*@include flex-box(row);
-    justify-content: space-around;
-    align-content: stretch; */
-    margin-bottom: 5px;
-  }
   @media only screen and (min-width: 768px) {
     max-width: 43%;
-    margin-right: 2%;
   }
   @media only screen and (min-width: 1024px) {
-    max-width: 20%;
+    max-width: 25%;
   }
 }
 
@@ -313,18 +303,19 @@ player-list {
   align-items: stretch;
   @media only screen and (min-width: 768px) {
     max-width: 55%;
+    padding-left: 2%;
   }
   @media only screen and (min-width: 1024px) {
-    max-width: 45%;
+    max-width: 38%;
   }
 }
 
 .third {
-  align-self: stretch;
+  align-items: stretch;
   @media only screen and (min-width: 768px) {
     max-width: 100%;
   }
   @media only screen and (min-width: 1024px) {
-    max-width: 30%;
+    max-width: 35%;
   }
 }
