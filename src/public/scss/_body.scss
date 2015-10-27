@@ -1,0 +1,19 @@
+/*************************
+  Body
+**************************/
+
+body {
+  @include flex-box(column);
+  margin: 0 0;
+}
+
+p,h2,h3,h4 {
+  margin: $spacing-text 0;
+  padding: 0 $spacing-text;
+  line-height: $line-height;
+}
+
+h3, h4 {
+  @include borderAndBack($primary, transparent);
+  color: white;
+}

@@ -1,0 +1,61 @@
+/*************************
+  Page Layout
+**************************/
+
+
+.page {
+  @include flex-box(column, 98%);
+  @media only screen and (min-width: $breakpoint-tablet) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.first,
+.second,
+.third {
+  @include flex-box(column);
+}
+
+.first {
+  @media only screen and (min-width: $breakpoint-tablet) {
+    max-width: 43%;
+  }
+  @media only screen and (min-width: $breakpoint-desktop) {
+    max-width: 25%;
+  }
+}
+
+.second {
+  @media only screen and (min-width: $breakpoint-tablet) {
+    max-width: 55%;
+  }
+  @media only screen and (min-width: $breakpoint-desktop) {
+    max-width: 37%;
+  }
+}
+
+.third {
+  @media only screen and (min-width: $breakpoint-tablet) {
+    max-width: 100%;
+  }
+  @media only screen and (min-width: $breakpoint-desktop) {
+    max-width: 35%;
+  }
+}
+
+username-input,
+picker,
+player-list,
+game-stack,
+game-selector {
+  @include flex-box(column);
+  margin-top: $spacing-sections;
+}
+
+.usernameButton,
+.selectGame,
+.pickerButton,
+.gamelist {
+  margin-top: $spacing-sections;
+}

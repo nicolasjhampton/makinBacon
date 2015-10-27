@@ -14,14 +14,14 @@
 <div class="gamelist">
   <div class="games" ng-repeat="game in gamelist" ng-hide="game.starting === 'Game Over'">
     <div>
-      <p><b>{{game.starting}}</b></p>
+      <h4><b>{{game.starting}}</b></h4>
     </div>
     <div>
       <div>
-        <p><b>Players:</b></p>
+        <h4><b>Players:</b></h4>
       </div>
       <div ng-repeat="(key,value) in game.playerList">
-        <p>{{key}}: {{value}}</p>
+        <h4>{{key}}: {{value}}</h4>
       </div>
     </div>
   </div>

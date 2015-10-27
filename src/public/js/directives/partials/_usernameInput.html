@@ -1,9 +1,9 @@
 <form name="usernameForm" ng-submit="usernameForm.$valid && usernameInput.createUsername(username)" novalidate>
-  <h2>Name:</h2>
+  <h3>Name:</h3>
   <div>
     <input name="usernameInput" type="text" ng-model="username" required/>
   </div>
-  <div>
+  <div class="usernameButton">
     <input type="submit" value="Submit"/>
   </div>
 </form>

@@ -1,269 +1,13 @@
 /*************************
-  body
-**************************/
-.stackImg {
-  max-width: 92px;
-  max-height: 132px; }
-
-/*************************
-  variables
+  Variables
 **************************/
 /*#da9fda*/
 /*************************
-  mixins
+  Mixins
 **************************/
 /*************************
-  game
+  Body
 **************************/
-username-input {
-  display: flex;
-  flex-flow: column wrap;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between; }
-  username-input form {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 8px; }
-    username-input form > div {
-      background: #CC7ACC;
-      border: solid 5px #CC7ACC;
-      border-radius: 5px;
-      width: 100%; }
-      username-input form > div:hover {
-        background: #da9fda;
-        border: solid 5px #da9fda; }
-    username-input form select,
-    username-input form button,
-    username-input form input {
-      border: solid 5px #da9fda;
-      border-radius: 5px;
-      background: #da9fda;
-      height: 40px;
-      width: 100%; }
-      username-input form select:hover,
-      username-input form button:hover,
-      username-input form input:hover {
-        cursor: pointer; }
-    username-input form input[type="text"] {
-      border: none;
-      width: 99.5%; }
-
-game-selector {
-  display: flex;
-  flex-flow: column wrap;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between; }
-  game-selector .selectGame {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 8px; }
-    game-selector .selectGame > div {
-      background: #CC7ACC;
-      border: solid 5px #CC7ACC;
-      border-radius: 5px;
-      width: 100%; }
-      game-selector .selectGame > div:hover {
-        background: #da9fda;
-        border: solid 5px #da9fda; }
-    game-selector .selectGame select,
-    game-selector .selectGame button,
-    game-selector .selectGame input {
-      border: solid 5px #da9fda;
-      border-radius: 5px;
-      background: #da9fda;
-      height: 40px;
-      width: 100%; }
-      game-selector .selectGame select:hover,
-      game-selector .selectGame button:hover,
-      game-selector .selectGame input:hover {
-        cursor: pointer; }
-  game-selector .gameButtons {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-    border-radius: 5px;
-    background: #CC7ACC;
-    border: solid 5px #CC7ACC;
-    margin-top: 8px;
-    flex-wrap: nowrap; }
-    game-selector .gameButtons > div {
-      background: #CC7ACC;
-      border: solid 5px #CC7ACC;
-      border-radius: 5px;
-      width: 50%; }
-      game-selector .gameButtons > div:hover {
-        background: #da9fda;
-        border: solid 5px #da9fda; }
-    game-selector .gameButtons select,
-    game-selector .gameButtons button,
-    game-selector .gameButtons input {
-      border: solid 5px #da9fda;
-      border-radius: 5px;
-      background: #da9fda;
-      height: 40px;
-      width: 100%; }
-      game-selector .gameButtons select:hover,
-      game-selector .gameButtons button:hover,
-      game-selector .gameButtons input:hover {
-        cursor: pointer; }
-
-.gamelist {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: stretch;
-  width: 100%;
-  justify-content: space-around;
-  border-radius: 5px;
-  background: #da9fda;
-  border: solid 5px #CC7ACC;
-  margin-top: 8px;
-  padding-top: 8px; }
-  .gamelist .games {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: center;
-    width: 42%;
-    justify-content: center;
-    border-radius: 5px;
-    background: #CC7ACC;
-    border: solid 5px transparent;
-    margin-bottom: 8px; }
-    .gamelist .games > div {
-      display: flex;
-      flex-flow: row wrap;
-      align-items: center;
-      width: 100%;
-      justify-content: space-around;
-      color: white; }
-      .gamelist .games > div p {
-        margin: 0 0; }
-
-game-stack {
-  display: flex;
-  flex-flow: column wrap;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  border-radius: 5px;
-  background: white;
-  border: solid 5px #CC7ACC;
-  margin-top: 8px; }
-  game-stack .card {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-    border-radius: 5px;
-    background: #da9fda;
-    border: solid 5px #CC7ACC;
-    border-top: none;
-    flex-wrap: nowrap; }
-    game-stack .card h2, game-stack .card p {
-      padding: 0 8px;
-      margin: 0 0; }
-  game-stack .right {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: flex-end;
-    width: 100%;
-    justify-content: space-between;
-    order: 2;
-    width: auto; }
-  game-stack .left {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: flex-start;
-    width: 100%;
-    justify-content: space-between;
-    order: 1;
-    width: auto; }
-  game-stack .player-label {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    width: 100%;
-    justify-content: center;
-    text-align: center; }
-
-picker {
-  margin-top: 8px;
-  display: flex;
-  flex-flow: column wrap;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  margin-top: 8px; }
-  picker > div {
-    background: #CC7ACC;
-    border: solid 5px #CC7ACC;
-    border-radius: 5px;
-    width: 100%; }
-    picker > div:hover {
-      background: #da9fda;
-      border: solid 5px #da9fda; }
-  picker select,
-  picker button,
-  picker input {
-    border: solid 5px #da9fda;
-    border-radius: 5px;
-    background: #da9fda;
-    height: 40px;
-    width: 100%; }
-    picker select:hover,
-    picker button:hover,
-    picker input:hover {
-      cursor: pointer; }
-  picker .topSpace {
-    margin-top: 8px; }
-  @media only screen and (min-width: 768px) {
-    picker {
-      order: 1; } }
-
-player-list {
-  display: flex;
-  flex-flow: column wrap;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  border-radius: 5px;
-  background: #da9fda;
-  border: solid 5px #CC7ACC;
-  margin-top: 8px; }
-  player-list div {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    width: 100%;
-    justify-content: space-around;
-    margin-top: 5px; }
-    player-list div h3, player-list div p {
-      border-radius: 5px;
-      background: #CC7ACC;
-      border: solid 5px transparent;
-      color: white;
-      line-height: 1.5em;
-      padding-left: 2%;
-      padding-right: 2%;
-      margin: 0; }
-    player-list div .names {
-      margin-bottom: 5px; }
-  @media only screen and (min-width: 768px) {
-    player-list {
-      order: 2; } }
-
 body {
   display: flex;
   flex-flow: column wrap;
@@ -272,6 +16,20 @@ body {
   justify-content: space-between;
   margin: 0 0; }
 
+p, h2, h3, h4 {
+  margin: 5px 0;
+  padding: 0 5px;
+  line-height: 1.5em; }
+
+h3, h4 {
+  border-radius: 5px;
+  background: #CC7ACC;
+  border: solid 5px transparent;
+  color: white; }
+
+/*************************
+  Page Layout
+**************************/
 .page {
   display: flex;
   flex-flow: column wrap;
@@ -280,11 +38,8 @@ body {
   justify-content: space-between; }
   @media only screen and (min-width: 768px) {
     .page {
-      display: flex;
-      flex-flow: row wrap;
-      align-items: flex-start;
-      width: 98%;
-      justify-content: space-between; } }
+      flex-direction: row;
+      align-items: flex-start; } }
 
 .first,
 .second,
@@ -294,11 +49,6 @@ body {
   align-items: center;
   width: 100%;
   justify-content: space-between; }
-  @media only screen and (min-width: 768px) {
-    .first,
-    .second,
-    .third {
-      max-width: 40%; } }
 
 @media only screen and (min-width: 768px) {
   .first {
@@ -320,5 +70,264 @@ body {
 @media only screen and (min-width: 1024px) {
   .third {
     max-width: 35%; } }
+
+username-input,
+picker,
+player-list,
+game-stack,
+game-selector {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 8px; }
+
+.usernameButton,
+.selectGame,
+.pickerButton,
+.gamelist {
+  margin-top: 8px; }
+
+/*************************
+  Username-input element
+**************************/
+username-input form {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-around; }
+  username-input form > div {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: #CC7ACC;
+    border: solid 5px #CC7ACC;
+    width: 100%; }
+    username-input form > div:hover {
+      border-radius: 5px;
+      background: #da9fda;
+      border: solid 5px #da9fda; }
+  username-input form select,
+  username-input form button,
+  username-input form input {
+    border-radius: 5px;
+    background: #da9fda;
+    border: solid 5px #da9fda;
+    font: 20px bold;
+    color: white;
+    height: 40px;
+    width: 100%; }
+    username-input form select:hover,
+    username-input form button:hover,
+    username-input form input:hover {
+      cursor: pointer; }
+  username-input form input[type="text"] {
+    width: 98%; }
+
+/*************************
+  Game-selector element
+**************************/
+game-selector .gameButtons {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  border-radius: 5px;
+  background: #CC7ACC;
+  border: solid 5px #CC7ACC;
+  flex-wrap: nowrap; }
+  game-selector .gameButtons > div {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: #CC7ACC;
+    border: solid 5px #CC7ACC;
+    width: 50%; }
+    game-selector .gameButtons > div:hover {
+      border-radius: 5px;
+      background: #da9fda;
+      border: solid 5px #da9fda; }
+  game-selector .gameButtons select,
+  game-selector .gameButtons button,
+  game-selector .gameButtons input {
+    border-radius: 5px;
+    background: #da9fda;
+    border: solid 5px #da9fda;
+    font: 20px bold;
+    color: white;
+    height: 40px;
+    width: 100%; }
+    game-selector .gameButtons select:hover,
+    game-selector .gameButtons button:hover,
+    game-selector .gameButtons input:hover {
+      cursor: pointer; }
+  game-selector .gameButtons input[type="text"] {
+    width: 98%; }
+game-selector .selectGame {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-around; }
+  game-selector .selectGame > div {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: #CC7ACC;
+    border: solid 5px #CC7ACC;
+    width: 100%; }
+    game-selector .selectGame > div:hover {
+      border-radius: 5px;
+      background: #da9fda;
+      border: solid 5px #da9fda; }
+  game-selector .selectGame select,
+  game-selector .selectGame button,
+  game-selector .selectGame input {
+    border-radius: 5px;
+    background: #da9fda;
+    border: solid 5px #da9fda;
+    font: 20px bold;
+    color: white;
+    height: 40px;
+    width: 100%; }
+    game-selector .selectGame select:hover,
+    game-selector .selectGame button:hover,
+    game-selector .selectGame input:hover {
+      cursor: pointer; }
+  game-selector .selectGame input[type="text"] {
+    width: 98%; }
+game-selector .gamelist {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: space-around;
+  width: 100%;
+  justify-content: space-around;
+  border-radius: 5px;
+  background: #da9fda;
+  border: solid 5px #CC7ACC; }
+  game-selector .gamelist .games {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    width: 42%;
+    justify-content: center;
+    border-radius: 5px;
+    background: #CC7ACC;
+    border: solid 5px #da9fda; }
+    game-selector .gamelist .games > div {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: center;
+      width: 100%;
+      justify-content: space-around; }
+
+/*************************
+  Game-stack element
+**************************/
+game-stack {
+  border-radius: 5px;
+  background: white;
+  border: solid 5px #CC7ACC; }
+  game-stack .card {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: #da9fda;
+    border: solid 5px #CC7ACC;
+    flex-wrap: nowrap;
+    border-top: none; }
+  game-stack .right {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: flex-end;
+    width: 100%;
+    justify-content: space-between;
+    order: 2;
+    width: auto; }
+  game-stack .left {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: flex-start;
+    width: 100%;
+    justify-content: space-between;
+    order: 1;
+    width: auto; }
+  game-stack .player-label {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: center; }
+
+/*************************
+  Picker element
+**************************/
+picker {
+  flex-wrap: nowrap; }
+  picker > div {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: #CC7ACC;
+    border: solid 5px #CC7ACC;
+    width: 100%; }
+    picker > div:hover {
+      border-radius: 5px;
+      background: #da9fda;
+      border: solid 5px #da9fda; }
+  picker select,
+  picker button,
+  picker input {
+    border-radius: 5px;
+    background: #da9fda;
+    border: solid 5px #da9fda;
+    font: 20px bold;
+    color: white;
+    height: 40px;
+    width: 100%; }
+    picker select:hover,
+    picker button:hover,
+    picker input:hover {
+      cursor: pointer; }
+  picker input[type="text"] {
+    width: 98%; }
+  @media only screen and (min-width: 768px) {
+    picker {
+      order: 1; } }
+
+/*************************
+  Player-list element
+**************************/
+player-list {
+  border-radius: 5px;
+  background: #da9fda;
+  border: solid 5px #CC7ACC; }
+  player-list .game-score {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around; }
+  @media only screen and (min-width: 768px) {
+    player-list {
+      order: 2; } }
 
 /*# sourceMappingURL=application.css.map */

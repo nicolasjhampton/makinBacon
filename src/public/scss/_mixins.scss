@@ -1,0 +1,46 @@
+/*************************
+  Mixins
+**************************/
+
+@mixin flex-box($direction, $width:100%, $align:center, $justify:space-between) {
+  display: flex;
+  flex-flow: $direction wrap;
+  align-items: $align;
+  width: $width;
+  justify-content: $justify;
+}
+
+@mixin borderAndBack($bg, $border) {
+  border-radius: $border-width;
+  background: $bg;
+  border: solid $border-width $border;
+}
+
+@mixin buttonContainer($width) {
+  > div {
+    @include flex-box(column);
+    @include borderAndBack($primary, $primary);
+    width: $width;
+    &:hover {
+      @include borderAndBack($secondary, $secondary);
+    }
+  }
+}
+
+@mixin selectButton($width) {
+  select,
+  button,
+  input {
+    @include borderAndBack($secondary, $secondary);
+    font: $button-font-size bold;
+    color: white;
+    height: $button-height;
+    width: $width;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  input[type="text"] {
+    width: 98%;
+  }
+}

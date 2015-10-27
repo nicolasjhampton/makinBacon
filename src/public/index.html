@@ -2,9 +2,8 @@
 <html lang='en'>
   <head>
     <title>Makin Bacon | Staggarlee Development</title>
-    <meta name='viewport' content='width=device-width' initial-scale='1.0'>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
     <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-    <!--<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' rel='stylesheet' media='screen'>-->
     <link href='./css/application.css' rel='stylesheet' media='screen'>
   <head>
   <body ng-app="myApp"><!--App Declaration-->
@@ -13,29 +12,26 @@
 
         <!--First Column: Input-->
         <div class="first">
-          <!--<h2>{{ main.username }}</h2>-->
+          <username-input ng-show="!main.username"></username-input>
           <player-list ng-show="main.inGame" count="main.game.actorCount" listofplayers="main.playerList"></player-list>
-          <picker class="form" ng-show="main.inGame" gameid="main.gameID" nextcredits="main.nextcredits"></picker>
+          <picker ng-show="main.inGame" gameid="main.gameID" nextcredits="main.nextcredits"></picker>
         </div><!--End of First Column-->
 
         <!--Second Column: Stack-->
         <div class="second">
-
           <game-stack ng-repeat="stackItem in main.game.stack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
-
         </div><!--End of Second Column-->
 
         <!--Third Column: Users-->
         <div class="third">
-          <username-input class="form" ng-show="!main.username"></username-input>
-          <game-selector class="form" ng-show="main.username" gamelist="main.gameList"></game-selector>
+          <game-selector ng-show="main.username" gamelist="main.gameList"></game-selector>
         </div><!--End of Third Column-->
 
       </div><!--End of Controller delclaration-->
       <footer>
         <br>
         <br>
-        <span><p>© 2015 Nicolas James Hampton, All Rights Reserved</p></span>
+        <span><h4>© 2015 Nicolas James Hampton, All Rights Reserved</h4></span>
         <br>
         <br>
       </footer>

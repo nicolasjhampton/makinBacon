@@ -1,0 +1,95 @@
+/*************************
+  Username-input element
+**************************/
+
+username-input {
+  form {
+    @include flex-box(column, $justify:space-around);
+    @include buttonContainer(100%);
+    @include selectButton(100%);
+  }
+}
+
+/*************************
+  Game-selector element
+**************************/
+
+game-selector {
+  .gameButtons {
+    @include flex-box(row);
+    @include borderAndBack($primary, $primary);
+    @include buttonContainer(50%);
+    @include selectButton(100%);
+    flex-wrap: nowrap;
+  }
+  .selectGame {
+    @include flex-box(column, $justify:space-around);
+    @include buttonContainer(100%);
+    @include selectButton(100%);
+  }
+  .gamelist {
+      @include flex-box(row, 100%, $align:space-around, $justify:space-around);
+      @include borderAndBack($secondary, $primary);
+    .games {
+      @include flex-box(column, 42%, $justify:center);
+      @include borderAndBack($primary, $secondary);
+      > div {
+        @include flex-box(row, $justify:space-around);
+      }
+    }
+  }
+}
+
+/*************************
+  Game-stack element
+**************************/
+
+game-stack {
+  @include borderAndBack(white, $primary);
+  .card {
+    @include flex-box(row);
+    @include borderAndBack($secondary, $primary);
+    flex-wrap: nowrap;
+    border-top: none;
+  }
+  .right {
+    @include flex-box(column, $align:flex-end);
+    order: 2;
+    width: auto;
+  }
+  .left {
+    @include flex-box(column, $align:flex-start);
+    order: 1;
+    width: auto;
+  }
+  .player-label {
+    @include flex-box(column, $justify:center);
+  }
+}
+
+/*************************
+  Picker element
+**************************/
+
+picker {
+  flex-wrap: nowrap;
+  @include buttonContainer(100%);
+  @include selectButton(100%);
+  @media only screen and (min-width: $breakpoint-tablet) {
+    order: 1;
+  }
+}
+
+/*************************
+  Player-list element
+**************************/
+
+player-list {
+  @include borderAndBack($secondary, $primary);
+  .game-score {
+    @include flex-box(row, $justify:space-around);
+  }
+  @media only screen and (min-width: $breakpoint-tablet) {
+    order: 2;
+  }
+}

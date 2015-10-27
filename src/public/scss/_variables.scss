@@ -1,0 +1,17 @@
+/*************************
+  Variables
+**************************/
+
+$primary : #CC7ACC;
+$secondary : lighten($primary, 10%); /*#da9fda*/
+
+$spacing-sections: 8px;
+$spacing-text: 5px;
+
+$line-height: 1.5em;
+$border-width: 5px;
+$button-font-size: 20px;
+$button-height: 40px;
+
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
