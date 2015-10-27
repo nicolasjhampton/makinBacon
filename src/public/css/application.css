@@ -8,320 +8,317 @@
 /*************************
   variables
 **************************/
+/*#da9fda*/
 /*************************
   mixins
 **************************/
 /*************************
   game
 **************************/
-select, button {
-  width: 100%; }
-
 username-input {
   display: flex;
   flex-flow: column wrap;
-  width: 100%; }
+  align-items: center;
+  width: 100%;
+  justify-content: space-between; }
   username-input form {
     display: flex;
     flex-flow: column wrap;
-    width: 100%; }
-    username-input form input[type="text"] {
-      background: white;
-      height: 40px;
-      align-self: stretch;
-      border: solid 5px #da9fda;
-      border-radius: 5px;
-      flex: 1;
-      height: 40px;
-      justify-content: stretch;
-      align-self: stretch;
-      box-shadow: inset 0 1px 3px black;
-      text-align: center;
-      font-size: 1.3em; }
-      username-input form input[type="text"]:hover {
-        cursor: pointer;
-        background: #da9fda;
-        border: solid 5px white; }
-    username-input form input[type="submit"] {
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 8px; }
+    username-input form > div {
       background: #CC7ACC;
-      height: 40px;
-      align-self: stretch;
+      border: solid 5px #CC7ACC;
+      border-radius: 5px;
+      width: 100%; }
+      username-input form > div:hover {
+        background: #da9fda;
+        border: solid 5px #da9fda; }
+    username-input form select,
+    username-input form button,
+    username-input form input {
       border: solid 5px #da9fda;
       border-radius: 5px;
-      flex: 1;
+      background: #da9fda;
       height: 40px;
-      justify-content: stretch;
-      align-self: stretch; }
-      username-input form input[type="submit"]:hover {
-        cursor: pointer;
-        background: #da9fda;
-        border: solid 5px #CC7ACC; }
+      width: 100%; }
+      username-input form select:hover,
+      username-input form button:hover,
+      username-input form input:hover {
+        cursor: pointer; }
+    username-input form input[type="text"] {
+      border: none;
+      width: 99.5%; }
 
 game-selector {
   display: flex;
   flex-flow: column wrap;
-  width: 100%; }
+  align-items: center;
+  width: 100%;
+  justify-content: space-between; }
   game-selector .selectGame {
     display: flex;
     flex-flow: column wrap;
+    align-items: center;
     width: 100%;
+    justify-content: space-between;
     margin-top: 8px; }
     game-selector .selectGame > div {
-      background: #da9fda;
+      background: #CC7ACC;
       border: solid 5px #CC7ACC;
       border-radius: 5px;
       width: 100%; }
       game-selector .selectGame > div:hover {
+        background: #da9fda;
         border: solid 5px #da9fda; }
-      @media only screen and (min-width: 768px) {
-        game-selector .selectGame > div {
-          margin-top: 0px; } }
     game-selector .selectGame select,
-    game-selector .selectGame button {
+    game-selector .selectGame button,
+    game-selector .selectGame input {
       border: solid 5px #da9fda;
-      border-radius: 0px;
+      border-radius: 5px;
       background: #da9fda;
       height: 40px;
       width: 100%; }
       game-selector .selectGame select:hover,
-      game-selector .selectGame button:hover {
+      game-selector .selectGame button:hover,
+      game-selector .selectGame input:hover {
         cursor: pointer; }
   game-selector .gameButtons {
     display: flex;
     flex-flow: row wrap;
+    align-items: center;
     width: 100%;
-    border: solid 5px #CC7aCC;
+    justify-content: space-between;
     border-radius: 5px;
-    background-color: #cc7acc;
-    justify-content: center;
-    margin-top: 8px; }
+    background: #CC7ACC;
+    border: solid 5px #CC7ACC;
+    margin-top: 8px;
+    flex-wrap: nowrap; }
     game-selector .gameButtons > div {
-      background: #da9fda;
+      background: #CC7ACC;
       border: solid 5px #CC7ACC;
       border-radius: 5px;
-      width: 47%; }
+      width: 50%; }
       game-selector .gameButtons > div:hover {
+        background: #da9fda;
         border: solid 5px #da9fda; }
-      @media only screen and (min-width: 768px) {
-        game-selector .gameButtons > div {
-          margin-top: 0px; } }
     game-selector .gameButtons select,
-    game-selector .gameButtons button {
+    game-selector .gameButtons button,
+    game-selector .gameButtons input {
       border: solid 5px #da9fda;
-      border-radius: 0px;
+      border-radius: 5px;
       background: #da9fda;
       height: 40px;
       width: 100%; }
       game-selector .gameButtons select:hover,
-      game-selector .gameButtons button:hover {
+      game-selector .gameButtons button:hover,
+      game-selector .gameButtons input:hover {
         cursor: pointer; }
-  game-selector .gameContainer {
-    padding-bottom: 100%; }
 
 .gamelist {
-  margin-top: 8px;
-  /* row of games */
   display: flex;
   flex-flow: row wrap;
+  align-items: stretch;
   width: 100%;
-  justify-content: space-between;
-  align-content: flex-start;
-  height: auto;
-  width: 100%;
-  background: #da9fda;
+  justify-content: space-around;
   border-radius: 5px;
-  border: solid 5px #CC7ACC; }
+  background: #da9fda;
+  border: solid 5px #CC7ACC;
+  margin-top: 8px;
+  padding-top: 8px; }
   .gamelist .games {
     display: flex;
     flex-flow: column wrap;
-    width: 100%;
-    background: #da9fda;
-    border-radius: 5px;
-    border: solid 5px #CC7ACC;
-    margin: 2.5%;
+    align-items: center;
     width: 42%;
-    text-align: center; }
+    justify-content: center;
+    border-radius: 5px;
+    background: #CC7ACC;
+    border: solid 5px transparent;
+    margin-bottom: 8px; }
     .gamelist .games > div {
       display: flex;
-      flex-flow: column wrap;
+      flex-flow: row wrap;
+      align-items: center;
       width: 100%;
-      color: white;
-      flex: 1; }
-
-.game-score {
-  margin-top: 8px; }
-  .game-score :first-child {
-    margin-right: auto;
-    text-align: left;
-    align-self: flex-start; }
-  .game-score :last-child {
-    margin-left: auto;
-    text-align: right;
-    align-self: flex-end; }
+      justify-content: space-around;
+      color: white; }
+      .gamelist .games > div p {
+        margin: 0 0; }
 
 game-stack {
   display: flex;
   flex-flow: column wrap;
+  align-items: center;
   width: 100%;
+  justify-content: space-between;
   border-radius: 5px;
   background: white;
   border: solid 5px #CC7ACC;
-  max-width: 100%;
-  margin-top: 8px;
-  align-items: center; }
-  @media only screen and (min-width: 1024px) {
-    game-stack {
-      max-width: 96%; } }
+  margin-top: 8px; }
   game-stack .card {
     display: flex;
     flex-flow: row wrap;
+    align-items: center;
     width: 100%;
-    margin: 0px 5px 0px 5px;
+    justify-content: space-between;
     border-radius: 5px;
     background: #da9fda;
     border: solid 5px #CC7ACC;
-    border-radius: 0;
-    align-content: space-between;
+    border-top: none;
     flex-wrap: nowrap; }
     game-stack .card h2, game-stack .card p {
-      padding: 0 8px; }
+      padding: 0 8px;
+      margin: 0 0; }
   game-stack .right {
     display: flex;
     flex-flow: column wrap;
-    width: 100%;
-    order: 2;
-    width: auto;
-    margin-left: auto;
     align-items: flex-end;
-    text-align: right; }
+    width: 100%;
+    justify-content: space-between;
+    order: 2;
+    width: auto; }
   game-stack .left {
     display: flex;
     flex-flow: column wrap;
-    width: 100%;
-    order: 1;
-    width: auto;
-    margin-right: auto;
     align-items: flex-start;
-    text-align: left; }
+    width: 100%;
+    justify-content: space-between;
+    order: 1;
+    width: auto; }
   game-stack .player-label {
     display: flex;
     flex-flow: row wrap;
+    align-items: center;
     width: 100%;
-    align-content: center;
-    text-align: center;
-    border-radius: 5px;
-    background: white;
-    border: solid 5px #CC7ACC;
-    border-radius: 0; }
-    game-stack .player-label p {
-      width: 100%; }
+    justify-content: center;
+    text-align: center; }
 
 picker {
   margin-top: 8px;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  justify-content: space-between;
   margin-top: 8px; }
   picker > div {
-    background: #da9fda;
+    background: #CC7ACC;
     border: solid 5px #CC7ACC;
     border-radius: 5px;
     width: 100%; }
     picker > div:hover {
+      background: #da9fda;
       border: solid 5px #da9fda; }
-    @media only screen and (min-width: 768px) {
-      picker > div {
-        margin-top: 0px; } }
   picker select,
-  picker button {
+  picker button,
+  picker input {
     border: solid 5px #da9fda;
-    border-radius: 0px;
+    border-radius: 5px;
     background: #da9fda;
     height: 40px;
     width: 100%; }
     picker select:hover,
-    picker button:hover {
+    picker button:hover,
+    picker input:hover {
       cursor: pointer; }
+  picker .topSpace {
+    margin-top: 8px; }
   @media only screen and (min-width: 768px) {
     picker {
       order: 1; } }
 
 player-list {
-  margin: 8px 0 0 0;
   display: flex;
   flex-flow: column wrap;
+  align-items: center;
   width: 100%;
-  width: 100%;
-  background: #da9fda;
+  justify-content: space-between;
   border-radius: 5px;
-  border: solid 5px #CC7ACC; }
+  background: #da9fda;
+  border: solid 5px #CC7ACC;
+  margin-top: 8px; }
   player-list div {
     display: flex;
     flex-flow: row wrap;
+    align-items: center;
     width: 100%;
-    justify-content: center; }
-    player-list div h3 {
-      line-height: .5em;
-      padding-left: 5%;
-      padding-right: 5%; }
+    justify-content: space-around;
+    margin-top: 5px; }
+    player-list div h3, player-list div p {
+      border-radius: 5px;
+      background: #CC7ACC;
+      border: solid 5px transparent;
+      color: white;
+      line-height: 1.5em;
+      padding-left: 2%;
+      padding-right: 2%;
+      margin: 0; }
+    player-list div .names {
+      margin-bottom: 5px; }
   @media only screen and (min-width: 768px) {
     player-list {
       order: 2; } }
 
+body {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin: 0 0; }
+
 .page {
   display: flex;
   flex-flow: column wrap;
-  width: 100%;
-  align-content: stretch;
-  width: 95%;
-  margin: 0 2.5%; }
+  align-items: center;
+  width: 98%;
+  justify-content: space-between; }
   @media only screen and (min-width: 768px) {
     .page {
-      align-content: space-between;
       display: flex;
       flex-flow: row wrap;
-      width: 100%;
-      width: 95%; } }
-  @media only screen and (min-width: 1024px) {
-    .page {
-      align-content: space-between; } }
+      align-items: flex-start;
+      width: 98%;
+      justify-content: space-between; } }
 
 .first,
 .second,
 .third {
   display: flex;
   flex-flow: column wrap;
+  align-items: center;
   width: 100%;
-  flex: auto; }
+  justify-content: space-between; }
   @media only screen and (min-width: 768px) {
     .first,
     .second,
     .third {
       max-width: 40%; } }
 
-.first {
-  align-items: stretch; }
-  @media only screen and (min-width: 768px) {
-    .first {
-      max-width: 43%; } }
-  @media only screen and (min-width: 1024px) {
-    .first {
-      max-width: 25%; } }
+@media only screen and (min-width: 768px) {
+  .first {
+    max-width: 43%; } }
+@media only screen and (min-width: 1024px) {
+  .first {
+    max-width: 25%; } }
 
-.second {
-  align-items: stretch; }
-  @media only screen and (min-width: 768px) {
-    .second {
-      max-width: 55%;
-      padding-left: 2%; } }
-  @media only screen and (min-width: 1024px) {
-    .second {
-      max-width: 38%; } }
+@media only screen and (min-width: 768px) {
+  .second {
+    max-width: 55%; } }
+@media only screen and (min-width: 1024px) {
+  .second {
+    max-width: 37%; } }
 
-.third {
-  align-items: stretch; }
-  @media only screen and (min-width: 768px) {
-    .third {
-      max-width: 100%; } }
-  @media only screen and (min-width: 1024px) {
-    .third {
-      max-width: 35%; } }
+@media only screen and (min-width: 768px) {
+  .third {
+    max-width: 100%; } }
+@media only screen and (min-width: 1024px) {
+  .third {
+    max-width: 35%; } }
 
 /*# sourceMappingURL=application.css.map */
