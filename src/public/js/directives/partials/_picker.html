@@ -2,5 +2,5 @@
   <select ng-model="option" ng-options="option as option.name for option in nextcredits | orderBy:'+name'"></select>
 </div>
 <div class="pickerButton">
-  <button ng-click="picker.selection(option, gameid)">Submit</button>
+  <button ng-click="picker.selection(option, gameid)">Add {{nextcredits[0].type}}</button>
 </div>

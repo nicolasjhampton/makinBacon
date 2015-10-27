@@ -16,6 +16,21 @@
   border: solid $border-width $border;
 }
 
+@mixin placeholder($color) {
+  &::-webkit-input-placeholder{
+    color:$color;
+  }
+  &:-moz-placeholder{
+    color:$color;
+  }
+  &::-moz-placeholder{
+    color:$color;
+  }
+  &:-ms-input-placeholder{
+    color:$color;
+  }
+}
+
 @mixin buttonContainer($width) {
   > div {
     @include flex-box(column);
@@ -32,6 +47,7 @@
   button,
   input {
     @include borderAndBack($secondary, $secondary);
+    @include placeholder(white);
     font: $button-font-size bold;
     color: white;
     height: $button-height;

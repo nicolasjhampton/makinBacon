@@ -122,6 +122,22 @@ username-input form {
     color: white;
     height: 40px;
     width: 100%; }
+    username-input form select::-webkit-input-placeholder,
+    username-input form button::-webkit-input-placeholder,
+    username-input form input::-webkit-input-placeholder {
+      color: white; }
+    username-input form select:-moz-placeholder,
+    username-input form button:-moz-placeholder,
+    username-input form input:-moz-placeholder {
+      color: white; }
+    username-input form select::-moz-placeholder,
+    username-input form button::-moz-placeholder,
+    username-input form input::-moz-placeholder {
+      color: white; }
+    username-input form select:-ms-input-placeholder,
+    username-input form button:-ms-input-placeholder,
+    username-input form input:-ms-input-placeholder {
+      color: white; }
     username-input form select:hover,
     username-input form button:hover,
     username-input form input:hover {
@@ -166,6 +182,22 @@ game-selector .gameButtons {
     color: white;
     height: 40px;
     width: 100%; }
+    game-selector .gameButtons select::-webkit-input-placeholder,
+    game-selector .gameButtons button::-webkit-input-placeholder,
+    game-selector .gameButtons input::-webkit-input-placeholder {
+      color: white; }
+    game-selector .gameButtons select:-moz-placeholder,
+    game-selector .gameButtons button:-moz-placeholder,
+    game-selector .gameButtons input:-moz-placeholder {
+      color: white; }
+    game-selector .gameButtons select::-moz-placeholder,
+    game-selector .gameButtons button::-moz-placeholder,
+    game-selector .gameButtons input::-moz-placeholder {
+      color: white; }
+    game-selector .gameButtons select:-ms-input-placeholder,
+    game-selector .gameButtons button:-ms-input-placeholder,
+    game-selector .gameButtons input:-ms-input-placeholder {
+      color: white; }
     game-selector .gameButtons select:hover,
     game-selector .gameButtons button:hover,
     game-selector .gameButtons input:hover {
@@ -202,6 +234,22 @@ game-selector .selectGame {
     color: white;
     height: 40px;
     width: 100%; }
+    game-selector .selectGame select::-webkit-input-placeholder,
+    game-selector .selectGame button::-webkit-input-placeholder,
+    game-selector .selectGame input::-webkit-input-placeholder {
+      color: white; }
+    game-selector .selectGame select:-moz-placeholder,
+    game-selector .selectGame button:-moz-placeholder,
+    game-selector .selectGame input:-moz-placeholder {
+      color: white; }
+    game-selector .selectGame select::-moz-placeholder,
+    game-selector .selectGame button::-moz-placeholder,
+    game-selector .selectGame input::-moz-placeholder {
+      color: white; }
+    game-selector .selectGame select:-ms-input-placeholder,
+    game-selector .selectGame button:-ms-input-placeholder,
+    game-selector .selectGame input:-ms-input-placeholder {
+      color: white; }
     game-selector .selectGame select:hover,
     game-selector .selectGame button:hover,
     game-selector .selectGame input:hover {
@@ -303,6 +351,22 @@ picker {
     color: white;
     height: 40px;
     width: 100%; }
+    picker select::-webkit-input-placeholder,
+    picker button::-webkit-input-placeholder,
+    picker input::-webkit-input-placeholder {
+      color: white; }
+    picker select:-moz-placeholder,
+    picker button:-moz-placeholder,
+    picker input:-moz-placeholder {
+      color: white; }
+    picker select::-moz-placeholder,
+    picker button::-moz-placeholder,
+    picker input::-moz-placeholder {
+      color: white; }
+    picker select:-ms-input-placeholder,
+    picker button:-ms-input-placeholder,
+    picker input:-ms-input-placeholder {
+      color: white; }
     picker select:hover,
     picker button:hover,
     picker input:hover {

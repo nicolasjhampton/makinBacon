@@ -40,7 +40,8 @@ app.directive('playerList', function() {
         restrict: 'E',
         scope: {
           count: '=',
-          listofplayers: '='
+          listofplayers: '=',
+          bacon: '='
         },
         templateUrl: './js/directives/partials/_playerList.html'
       };
