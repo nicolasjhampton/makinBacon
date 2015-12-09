@@ -1,7 +1,7 @@
 'use strict';
 
 /**********************************
- express http/socket.io boilerplate
+ 1. express http/socket.io boilerplate
  **********************************/
 
 // Starting our http/socket.io server
@@ -28,7 +28,7 @@ server.listen(app.get('port'), server_ip_address, function () {
 });
 
 /************************
- global variables
+ 2. global variables
  ************************/
 
 // arrays of the actors and movies chosen (note: combined into stack)
@@ -45,7 +45,7 @@ var gameNumber = 0;
 
 
 /**************************************
- Open socket routes: Main program here
+ 3. Open socket routes: Main program here
  **************************************/
 
 io.sockets.on('connect', function(socket) {
@@ -92,7 +92,7 @@ io.sockets.on('connect', function(socket) {
 
 
 /*************************
-  Game Flow functions
+  4. Game Flow functions
  *************************/
 
 
@@ -159,7 +159,7 @@ var addChoiceAndUpdateGame = function (data) {
 
 
 /***********************
- Emitters
+ 5. Emitters
  ***********************/
 
 /*
@@ -218,7 +218,7 @@ var removeGame = function(ID) {
 };
 
 /*************************
-  Game dynamics
+  6. Game dynamics
  *************************/
 
 var createFirstStackObject = function (jsonObject, data) {
@@ -336,7 +336,7 @@ var returnBacon = function (data) {
 
 
 /************************
- themoviedb api variables
+ 7. themoviedb api variables
  ************************/
 
 /*
@@ -397,7 +397,7 @@ var getApiOptions = function (optionsRequest, idOrPage) {
 
 
 /***********************
-  randomizer functions
+ 8. randomizer functions
  ***********************/
 
  var random = function (type) {
@@ -422,7 +422,7 @@ var getApiOptions = function (optionsRequest, idOrPage) {
 
 
 /*************************
-  Object functions
+  9. Object functions
  *************************/
 
  /*

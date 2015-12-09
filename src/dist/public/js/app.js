@@ -1,3 +1,24 @@
+/************************
+ 1. socket.js
+ ************************/
+
+(function(){
+
+  // simple socket.io service
+
+  var app = angular.module('myApp.factories', []);
+
+  app.factory('socket', function() {
+    var socket = io.connect();
+    return socket;
+  });
+
+})();
+/*  end of file  */
+/************************
+ 2. directives.js
+ ************************/
+
 (function(){
 
 var app = angular.module("myApp.directives", []);
@@ -10,7 +31,7 @@ app.directive('picker', function() {
           nextcredits: '=',
           gameid: '='
         },
-        templateUrl: './js/directives/partials/_picker.html',
+        templateUrl: './js/partials/_picker.html',
         controller: function (socket) {
 
           // Button for emitting new stack addition
@@ -43,7 +64,7 @@ app.directive('playerList', function() {
           listofplayers: '=',
           bacon: '='
         },
-        templateUrl: './js/directives/partials/_playerList.html'
+        templateUrl: './js/partials/_playerList.html'
       };
   });
 
@@ -51,7 +72,7 @@ app.directive('usernameInput', function() {
       return {
         restrict: 'E',
         scope:{},
-        templateUrl: './js/directives/partials/_usernameInput.html',
+        templateUrl: './js/partials/_usernameInput.html',
         controller: function (socket) {
 
           this.createUsername = function(username) {
@@ -71,7 +92,7 @@ app.directive('gameSelector', function() {
         scope: {
           gamelist: '='
         },
-        templateUrl: './js/directives/partials/_gameSelector.html',
+        templateUrl: './js/partials/_gameSelector.html',
         controller: function (socket) {
 
           // Button to start a new game
@@ -100,7 +121,7 @@ app.directive('gameStack', function() {
           first: '=first',
           last: '=last'
         },
-        templateUrl: './js/directives/partials/_gameStack.html',
+        templateUrl: './js/partials/_gameStack.html',
         link: function(scope) {
 
           // This decided how each stackitem is laid out
@@ -125,3 +146,99 @@ app.directive('gameStack', function() {
   }); // end of directive
 
 })();
+/*  end of file  */
+/************************
+ 3. controllers.js
+ ************************/
+
+(function(){
+
+  var app = angular.module('myApp.mainController', []);
+
+  // Controller for the input and stack display
+  app.controller('MainCtrl', function($scope, socket){
+
+    this.usernamePresent = false;
+
+    // Shows or doesn't show our game elements
+    this.inGame = false;
+
+
+
+    /**********************
+      Socket listeners
+     **********************/
+
+     // controller reference for our callbacks
+     var main = this;
+
+
+    socket.on('init', function(data){
+
+      main.game = data.game;
+      main.gameList = data.gameList;
+      main.username = data.username;
+      $scope.$digest();
+
+    });
+
+    socket.on('gameList', function(data){
+      main.gameList = data.gameList;
+      $scope.$digest();
+    });
+
+    /*
+     * 'update': Socket listener for our stack updates
+     */
+    socket.on('update', function(data){
+
+      console.log(data);
+      // Update our local stack variable in the scope
+      main.game = data.game;
+
+      //This is how we direct each pick for our picker
+      main.gameID = data.game.gameID;
+
+
+
+      // This actually tests to see if we're in a game yet
+      if(Object.keys(data.game)[0] !== undefined) {
+
+        // turns our game elements on
+        main.inGame = true;
+
+        //this will be the list of picks for the picker
+        main.nextcredits = data.game.stack[data.game.stack.length - 1].credits
+        console.log(main.nextcredits);
+        main.playerList = Object.keys(data.game.playerList).map(function(value) {
+          return {name:value, score:data.game.playerList[value]};
+        });
+      }
+
+      $scope.$digest();
+
+    }); // End of update socket listener
+
+    /*
+     * This is an echo that causes all players in a room to emit
+     * a signal to the server to detach them from this room
+     */
+    socket.on('leaveroom', function() {
+
+      socket.emit('leaveroom', {ID:main.gameID});
+
+    });
+  }); // End of controller
+})();
+/*  end of file  */
+/************************
+ 4. module.js
+ ************************/
+
+(function(){
+
+  // Create app, attach all parts to variable
+  var app = angular.module("myApp", ["myApp.factories", "myApp.directives", "myApp.mainController"]);
+
+})();
+/*  end of file  */

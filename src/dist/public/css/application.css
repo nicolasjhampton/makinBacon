@@ -53,6 +53,7 @@ h3, h4 {
 @media only screen and (min-width: 768px) {
   .first {
     max-width: 43%; } }
+
 @media only screen and (min-width: 1024px) {
   .first {
     max-width: 25%; } }
@@ -60,6 +61,7 @@ h3, h4 {
 @media only screen and (min-width: 768px) {
   .second {
     max-width: 55%; } }
+
 @media only screen and (min-width: 1024px) {
   .second {
     max-width: 37%; } }
@@ -67,6 +69,7 @@ h3, h4 {
 @media only screen and (min-width: 768px) {
   .third {
     max-width: 100%; } }
+
 @media only screen and (min-width: 1024px) {
   .third {
     max-width: 35%; } }
@@ -204,6 +207,7 @@ game-selector .gameButtons {
       cursor: pointer; }
   game-selector .gameButtons input[type="text"] {
     width: 98%; }
+
 game-selector .selectGame {
   display: flex;
   flex-flow: column wrap;
@@ -256,6 +260,7 @@ game-selector .selectGame {
       cursor: pointer; }
   game-selector .selectGame input[type="text"] {
     width: 98%; }
+
 game-selector .gamelist {
   display: flex;
   flex-flow: row wrap;

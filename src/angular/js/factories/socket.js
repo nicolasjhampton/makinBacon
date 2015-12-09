@@ -1,3 +1,7 @@
+/************************
+ 1. socket.js
+ ************************/
+
 (function(){
 
   // simple socket.io service
@@ -10,3 +14,4 @@
   });
 
 })();
+/*  end of file  */

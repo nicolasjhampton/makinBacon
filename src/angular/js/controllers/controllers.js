@@ -1,3 +1,7 @@
+/************************
+ 3. controllers.js
+ ************************/
+
 (function(){
 
   var app = angular.module('myApp.mainController', []);
@@ -77,3 +81,4 @@
     });
   }); // End of controller
 })();
+/*  end of file  */

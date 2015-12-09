@@ -113,3 +113,14 @@ app.factory('socket', ['$rootScope', function($rootScope) {
 		}
 	};
 }]);
+
+
+<div ng-show="movieOrActor">
+  <div class="col-xs-9">
+    <h2>{{ stackitem.name | uppercase }}</h2>
+    <p>with...</p><!--This needs to change based on movie or actor-->
+  </div>
+  <div class"col-xs-3">
+    <img ng-src="{{ stackitem.poster }}" style="max-width: 92px; max-height:132px">
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<div class="card"><!--Stack directive: Row repeats for every object in stack-->
+  <div class="{{ image }}">
+    <img class="stackImg" ng-src="{{ stackitem.poster }}">
+  </div>
+  <div class="{{ text }}">
+    <h2>{{ stackitem.name | uppercase }}</h2>
+    <p>{{ subtitle }}</p><!--This needs to change based on movie or actor-->
+  </div>
+</div>
+<div class="player-label">
+  <p>{{stackitem.player}}</p>
+</div><!--End of Stack directive-->

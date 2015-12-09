@@ -1,0 +1,28 @@
+<div class="gameButtons">
+  <div>
+    <button ng-click="gameSelector.startNewGame()">New Game</button>
+  </div>
+  <div>
+    <button ng-click="gameSelector.joinGame(game)">Join Game</button>
+  </div>
+</div>
+<div class="selectGame">
+  <div>
+    <select ng-model="game" ng-options="game as game.starting for game in gamelist|filter:{starting:'!Game Over'}" placeholder="Choose a game to join!"></select>
+  </div>
+</div>
+<div class="gamelist">
+  <div class="games" ng-repeat="game in gamelist" ng-hide="game.starting === 'Game Over'">
+    <div>
+      <h4><b>{{game.starting}}</b></h4>
+    </div>
+    <div>
+      <div>
+        <h4><b>Players:</b></h4>
+      </div>
+      <div ng-repeat="(key,value) in game.playerList">
+        <h4>{{key}}: {{value}}</h4>
+      </div>
+    </div>
+  </div>
+</div>

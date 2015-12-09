@@ -1,0 +1,17 @@
+<div class="game-score" ng-show="bacon">
+  <h3>Game Over!</h3>
+</div>
+<div class="game-score" ng-show="bacon">
+  <h3>Actors Used:</h3>
+  <h3>{{count}}</h3>
+</div>
+<div class="game-score" ng-show="bacon">
+  <h3>Final Scores:</h3>
+</div>
+<div class="game-score" ng-show="!bacon">
+  <h3>Actors Left till Bacon:</h3>
+  <h3>{{7 - count}}</h3>
+</div>
+<div class="game-score">
+  <h4 ng-repeat="player in listofplayers">{{player.name}}: {{player.score}}</h4>
+</div>

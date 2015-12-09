@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Makin Bacon | Staggarlee Development</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
+    <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+    <link href='./css/application.css' rel='stylesheet' media='screen'>
+  <head>
+  <body ng-app="myApp"><!--App Declaration-->
+
+      <div class="page" ng-controller="MainCtrl as main"><!--Controller Declaration-->
+
+        <!--First Column: Input-->
+        <div class="first">
+          <username-input ng-show="!main.username"></username-input>
+          <player-list ng-show="main.inGame" bacon="main.game.isBacon" count="main.game.actorCount" listofplayers="main.playerList"></player-list>
+          <picker ng-show="main.inGame" gameid="main.gameID" nextcredits="main.nextcredits"></picker>
+        </div><!--End of First Column-->
+
+        <!--Second Column: Stack-->
+        <div class="second">
+          <game-stack ng-repeat="stackItem in main.game.stack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
+        </div><!--End of Second Column-->
+
+        <!--Third Column: Users-->
+        <div class="third">
+          <game-selector ng-show="main.username" gamelist="main.gameList"></game-selector>
+        </div><!--End of Third Column-->
+
+      </div><!--End of Controller delclaration-->
+      <footer>
+        <br>
+        <br>
+        <span><h4>© 2015 Nicolas James Hampton, All Rights Reserved</h4></span>
+        <br>
+        <br>
+      </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+    <script src="./js/app.js"></script>
+  </body><!--End of App declaration-->
+</html>
