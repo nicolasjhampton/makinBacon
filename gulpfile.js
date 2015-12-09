@@ -3,7 +3,7 @@
 var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	sass = require('gulp-sass'),
-	sassMaps = require('gulp-sourcemaps');
+	srcMaps = require('gulp-sourcemaps');
 
 gulp.task('concatNodeScripts', function() {
 	var nodeScripts = [
@@ -20,7 +20,9 @@ gulp.task('concatNodeScripts', function() {
 	
 	
 	gulp.src(nodeScripts)
+		.pipe(srcMaps.init())
 		.pipe(concat('app.js'))
+		.pipe(srcMaps.write('./'))
 		.pipe(gulp.dest('src/dist'));
 });
 
@@ -34,7 +36,9 @@ gulp.task('concatAngularScripts', function() {
 	
 	
 	gulp.src(angularScripts)
+		.pipe(srcMaps.init())
 		.pipe(concat('app.js'))
+		.pipe(srcMaps.write('./'))
 		.pipe(gulp.dest('src/dist/public/js'));
 });
 
@@ -62,9 +66,9 @@ gulp.task('copyHtml', function() {
 
 gulp.task('compileSass', function(){
 	gulp.src('src/scss/application.scss')
-		.pipe(sassMaps.init())
+		.pipe(srcMaps.init())
 		.pipe(sass())
-		.pipe(sassMaps.write('./')) // Path is relative to dest directory
+		.pipe(srcMaps.write('./')) // Path is relative to dest directory
 		.pipe(gulp.dest('src/dist/public/css'));
 });
 

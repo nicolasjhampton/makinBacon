@@ -242,3 +242,4 @@ app.directive('gameStack', function() {
 
 })();
 /*  end of file  */
+//# sourceMappingURL=app.js.map
