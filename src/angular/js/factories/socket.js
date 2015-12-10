@@ -2,7 +2,7 @@
  1. socket.js
  ************************/
 
-(function(){
+!function(){
 
   // simple socket.io service
 
@@ -13,5 +13,5 @@
     return socket;
   });
 
-})();
+}();
 /*  end of file  */

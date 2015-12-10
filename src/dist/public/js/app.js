@@ -2,7 +2,7 @@
  1. socket.js
  ************************/
 
-(function(){
+!function(){
 
   // simple socket.io service
 
@@ -13,13 +13,13 @@
     return socket;
   });
 
-})();
+}();
 /*  end of file  */
 /************************
  2. directives.js
  ************************/
 
-(function(){
+!function(){
 
 var app = angular.module("myApp.directives", []);
 
@@ -145,13 +145,13 @@ app.directive('gameStack', function() {
       }; // end of return
   }); // end of directive
 
-})();
+}();
 /*  end of file  */
 /************************
  3. controllers.js
  ************************/
 
-(function(){
+!function(){
 
   var app = angular.module('myApp.mainController', []);
 
@@ -229,17 +229,17 @@ app.directive('gameStack', function() {
 
     });
   }); // End of controller
-})();
+}();
 /*  end of file  */
 /************************
  4. module.js
  ************************/
 
-(function(){
+!function(){
 
   // Create app, attach all parts to variable
   var app = angular.module("myApp", ["myApp.factories", "myApp.directives", "myApp.mainController"]);
 
-})();
+}();
 /*  end of file  */
 //# sourceMappingURL=app.js.map
