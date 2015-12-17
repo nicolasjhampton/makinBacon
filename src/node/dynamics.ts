@@ -1,6 +1,9 @@
 /*************************
  6. Game dynamics
  *************************/
+ 
+/// <reference path="objectFunct.ts" />
+/// <reference path="globalVar.ts" />
 
 var createFirstStackObject = function (jsonObject, data) {
 
@@ -15,7 +18,7 @@ var createStackObject = function(jsonObject, data) {
   // test part one: if we asked for an actor
   if(data.type === "actors") {
 
-    addActorToStack(jsonObject, data, false);
+    addActorToStack(jsonObject, data);
 
   // test part two: if we asked for a movie
   } else if(data.type === "movies") { // This is a movie, and thus a game in progress

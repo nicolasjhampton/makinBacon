@@ -1,6 +1,14 @@
 /*************************
   4. Game Flow functions
  *************************/
+ 
+/// <reference path="server.ts" />
+/// <reference path="globalVar.ts" />
+/// <reference path="emitters.ts" />
+/// <reference path="dynamics.ts" />
+/// <reference path="api.ts" />
+/// <reference path="random.ts" />
+/// <reference path="objectFunct.ts" />
 
 
 var startNewGame = function (data, socket) {

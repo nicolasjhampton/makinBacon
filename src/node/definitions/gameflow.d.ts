@@ -1,0 +1,10 @@
+/// <reference path="server.d.ts" />
+/// <reference path="globalVar.d.ts" />
+/// <reference path="emitters.d.ts" />
+/// <reference path="dynamics.d.ts" />
+/// <reference path="api.d.ts" />
+/// <reference path="random.d.ts" />
+/// <reference path="objectFunct.d.ts" />
+declare var startNewGame: (data: any, socket: any) => void;
+declare var joinGameInProgress: (data: any, socket: any) => void;
+declare var addChoiceAndUpdateGame: (data: any) => void;

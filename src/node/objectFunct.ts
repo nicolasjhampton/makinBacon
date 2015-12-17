@@ -1,6 +1,8 @@
 /*************************
  9. Object functions
  *************************/
+ 
+ /// <reference path="api.ts" />
 
  /*
   * This is the function we'll use to create a list of the
@@ -75,7 +77,7 @@ var createMovieObject = function(jsonObject, data) {
 
   // We're creating the filepath for our poster here
   // Note: See 'themoviedb api variables' section for contents
-  var moviePoster = getApiOptions('poster', jsonObject.poster_path);
+  var moviePoster = getPosterUrl(jsonObject.poster_path);
 
   // map a new array of cast members with only relevant details
   var movieCast = jsonObject.credits.cast.map(function(obj){
@@ -113,7 +115,7 @@ var createActorObject = function(jsonObject, data) {
   // We're creating the filepath for our poster here
   // Note: See 'themoviedb api variables' section for contents
 
-  var actorPoster = getApiOptions('poster', jsonObject.profile_path);
+  var actorPoster = getPosterUrl(jsonObject.profile_path);
 
 
   // map a new array of movies actor has been in with only relevant details

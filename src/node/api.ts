@@ -15,12 +15,6 @@ var getApiOptions = function (optionsRequest, idOrPage) {
   // Beginning Url for all api requests, using version 3 of api
   var apiUrl = 'https://api.themoviedb.org/3/';
 
-  // Beginning Url for all pictures from api
-  var posterUrl = 'http://image.tmdb.org/t/p/w92';
-
-  // If we get no image we'll send a generic question mark image from wikipedia
-  var unknownImg = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Question_mark_(black_on_white).png';
-
   switch(optionsRequest) {
 
     case 'popular':
@@ -43,18 +37,28 @@ var getApiOptions = function (optionsRequest, idOrPage) {
                 method: "GET"
               };
        break;
-
-    case 'poster':
-       if(idOrPage !== null) {
-
-         return posterUrl + idOrPage;
-
-       } else {
-
-         return unknownImg;
-
-       }
-       break;
   }
 };
+
+
+
+var getPosterUrl = function(pageUrl) {
+  
+  // Beginning Url for all pictures from api
+  var posterUrl = 'http://image.tmdb.org/t/p/w92';
+
+  // If we get no image we'll send a generic question mark image from wikipedia
+  var unknownImg = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Question_mark_(black_on_white).png';
+  
+  if(pageUrl !== null) {
+
+    return posterUrl + pageUrl;
+
+  } else {
+
+    return unknownImg;
+
+  }
+  
+}
 /*   End of File  */

@@ -2,6 +2,10 @@
  5. Emitters
  ***********************/
 
+/// <reference path="server.ts" />
+/// <reference path="globalVar.ts" />
+/// <reference path="objectFunct.ts" />
+
 /*
  * This communication function is ran when a new browser arrives
  * ToDo: create a database of players

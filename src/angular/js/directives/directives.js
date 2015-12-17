@@ -2,7 +2,7 @@
  2. directives.js
  ************************/
 
-!function(){
+(function(){
 
 var app = angular.module("myApp.directives", []);
 
@@ -128,5 +128,5 @@ app.directive('gameStack', function() {
       }; // end of return
   }); // end of directive
 
-}();
+})();
 /*  end of file  */

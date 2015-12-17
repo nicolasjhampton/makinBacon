@@ -1,8 +1,8 @@
-'use strict';
-
 /**********************************
  1. express http/socket.io boilerplate
- **********************************/
+ **********************************/ 
+ 
+/// <reference path="bundle.d.ts" />
 
 // Starting our http/socket.io server
 var express = require('express'),
@@ -21,7 +21,7 @@ app.set('port', server_port);
 // define public folder to serve static files
 app.use(express.static(__dirname + '/public'));
 
-// Set the sever to listen for get requests
+// Set the server to listen for get requests
 server.listen(app.get('port'), function () {
    console.log("Listening on port " + app.get('port'));
 });

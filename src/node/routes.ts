@@ -1,6 +1,9 @@
 /**************************************
  3. Open socket routes: Main program here
  **************************************/
+ 
+ /// <reference path="server.ts" />
+ /// <reference path="gameflow.ts" />
 
 io.sockets.on('connect', function(socket) {
 
