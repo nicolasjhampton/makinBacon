@@ -20,14 +20,14 @@ var options = {
 gulp.task('concatNodeScripts', ['compileNodeScripts'], function() {
 	var nodeScripts = [
 		options.src.node + 'js/server.js',
+		options.src.node + 'js/api.js',
+		options.src.node + 'js/objectFunct.js',
 		options.src.node + 'js/globalVar.js',
 		options.src.node + 'js/routes.js',
 		options.src.node + 'js/gameflow.js',
 		options.src.node + 'js/emitters.js',
 		options.src.node + 'js/dynamics.js',
-		options.src.node + 'js/api.js',
-		options.src.node + 'js/random.js',
-		options.src.node + 'js/objectFunct.js'
+		options.src.node + 'js/random.js'
 	];
 	
 	return gulp.src(nodeScripts)

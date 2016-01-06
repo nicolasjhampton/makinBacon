@@ -15,13 +15,7 @@ var newPlayerInit = function(socket, data) {
   // stores the player name under the list of usernames active
   socket.username = data.username;
 
-  socket.emit('init', {game:{} ,gameList:createGameList(), username:socket.username});
-
-  // Clear any old game in the browser, give username
-  //socket.emit('update', {game:{}, username:socket.username});
-
-  // create and emit a current list of games, then wait for selection
-  //socket.emit('gameList', {gameList:createGameList()});
+  socket.emit('init', {game:{} ,gameList:gamestack.getGamelist(), username:socket.username});
 
 };
 
@@ -31,33 +25,36 @@ var newPlayerInit = function(socket, data) {
  * it's built into getDBInfo at the end for timing reasons
  */
 var sendStack = function(data) {
-
+  console.log(gamestack.getGame(data.gameID));
   // Emit the game to it's assigned room
-  io.sockets.in(data.gameID).emit('update', {game:gameStack[data.gameID]});
+  io.sockets.in(data.gameID).emit('update', {game:gamestack.getGame(data.gameID)});
 
   // Update the gamelist for all players and rooms
-  io.sockets.emit('gameList', {gameList:createGameList()});
+  // io.sockets.emit('gameList', {gameList:createGameList()});
+  io.sockets.emit('gameList', {gameList:gamestack.getGamelist()});
 
   // remove this game if the game was won/lost
-  if(gameStack[data.gameID].actorCount === 7 || gameStack[data.gameID].isBacon === true) {
+  if(gamestack.getGame(data.gameID).actorCount === 7 || gamestack.getGame(data.gameID).isBacon === true) {
     removeGame(data.gameID);
   }
 
 };
 
 
+// Todo: removeGame needs redesign and object integration
+
 var removeGame = function(ID) {
 
- gameStack[ID].stack = [{name:'Game Over'}];
- gameStack[ID].players = {deadGame:'Game Over'};
- gameStack[ID].isBacon = true;
+ gamestack.getGame(ID).cardStack = [{name:'Game Over'}];
+ gamestack.getGame(ID).playerList = {deadGame:'Game Over'};
+ gamestack.getGame(ID).isBacon = true;
 
  // Send out a roomwide leaveroom event, so that all sockets come back and
  // leave the room
  io.sockets.in(ID).emit('leaveroom');
 
  // Send revised game list
- io.sockets.emit('gameList', {gameList:createGameList()});
+ io.sockets.emit('gameList', {gameList:gamestack.getGamelist()});
 
 };
 /*   End of File  */

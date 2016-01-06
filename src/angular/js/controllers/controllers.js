@@ -59,7 +59,7 @@
         main.inGame = true;
 
         //this will be the list of picks for the picker
-        main.nextcredits = data.game.stack[data.game.stack.length - 1].credits
+        main.nextcredits = data.game.cardStack[data.game.cardStack.length - 1].credits
         console.log(main.nextcredits);
         main.playerList = Object.keys(data.game.playerList).map(function(value) {
           return {name:value, score:data.game.playerList[value]};

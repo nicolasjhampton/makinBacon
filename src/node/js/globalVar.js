@@ -1,3 +1,1 @@
-var gameStack = [];
-var newGame = true;
-var gameNumber = 0;
+var gamestack = new GameStack();

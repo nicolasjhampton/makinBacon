@@ -7,16 +7,136 @@ server.listen(app.get('port'), function () {
     console.log("Listening on port " + app.get('port'));
 });
 
-var gameStack = [];
-var newGame = true;
-var gameNumber = 0;
+var ApiRequest = (function () {
+    function ApiRequest(requestType, id) {
+        this.requestType = requestType;
+        this.id = id;
+        this.apiUrl = 'https://api.themoviedb.org/3/';
+        this.apiKey = '';
+        this.options = { url: "", method: "GET" };
+        switch (requestType) {
+            case 'popular':
+                this.options.url = this.apiUrl + 'person/popular?page=' + this.id + '&api_key=' + this.apiKey;
+                break;
+            case 'actors':
+                this.options.url = this.apiUrl + 'person/' + this.id + '?api_key=' + this.apiKey + '&append_to_response=movie_credits';
+                break;
+            case 'movies':
+                this.options.url = this.apiUrl + 'movie/' + this.id + '?api_key=' + this.apiKey + '&append_to_response=credits';
+                break;
+        }
+    }
+    return ApiRequest;
+})();
+var Poster = (function () {
+    function Poster(pageUrl) {
+        this.pageUrl = pageUrl;
+        this.baseUrl = 'http://image.tmdb.org/t/p/w92';
+        this.unknownImg = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Question_mark_(black_on_white).png';
+        if (pageUrl !== null) {
+            this.url = this.baseUrl + this.pageUrl;
+        }
+        else {
+            this.url = this.unknownImg;
+        }
+    }
+    return Poster;
+})();
+
+var StackCard = (function () {
+    function StackCard(jsonObject, data) {
+        var cast;
+        var nameKey;
+        var creditsType;
+        var creditsKey;
+        var posterKey;
+        if (data.type === "actors") {
+            cast = jsonObject.movie_credits.cast;
+            nameKey = "name";
+            creditsKey = "original_title";
+            creditsType = "movies";
+            posterKey = 'profile_path';
+        }
+        else if (data.type === "movies") {
+            cast = jsonObject.credits.cast;
+            nameKey = "original_title";
+            creditsKey = "name";
+            creditsType = "actors";
+            posterKey = 'poster_path';
+        }
+        var credits = cast.map(function (obj) {
+            return {
+                type: creditsType,
+                name: obj[creditsKey],
+                id: obj.id
+            };
+        });
+        this.gameID = data.gameID;
+        this.player = data.player;
+        this.type = data.type;
+        this.name = jsonObject[nameKey];
+        this.id = jsonObject.id;
+        this.poster = new Poster(jsonObject[posterKey]);
+        this.credits = credits;
+    }
+    return StackCard;
+})();
+var Game = (function () {
+    function Game(gameID, startingPlayer) {
+        this.gameID = gameID;
+        var players = {};
+        players[startingPlayer] = 0;
+        this.playerList = players;
+        this.actorCount = 0;
+        this.isBacon = false;
+        this.cardStack = [];
+    }
+    Game.prototype.pushCard = function (jsonObject, data) {
+        var stackcard = new StackCard(jsonObject, data);
+        if (data.firstStackEmit !== true) {
+            this.playerList[data.player] += 100;
+        }
+        if (data.type === "actors") {
+            this.actorCount += 1;
+        }
+        this.cardStack.push(stackcard);
+        return data;
+    };
+    return Game;
+})();
+var GameStack = (function () {
+    function GameStack() {
+        this.stack = [];
+        this.gameCount = 0;
+    }
+    GameStack.prototype.getGamelist = function () {
+        return this.stack.map(function (obj) {
+            return {
+                gameID: obj.gameID,
+                playerList: obj.playerList,
+                starting: obj.cardStack[0].name || null
+            };
+        });
+    };
+    GameStack.prototype.addGame = function (data) {
+        var game = new Game(this.gameCount, data.player);
+        this.stack[this.gameCount] = game;
+        this.gameCount++;
+        return game.gameID;
+    };
+    GameStack.prototype.getGame = function (gameID) {
+        return this.stack[gameID];
+    };
+    return GameStack;
+})();
+
+var gamestack = new GameStack();
 
 io.sockets.on('connect', function (socket) {
     socket.on('adduser', function (data) {
         newPlayerInit(socket, data);
     });
     socket.on('select game', function (data) {
-        console.log('selection received');
         if (data.gameID === 'newGame') {
             startNewGame(data, socket);
         }
@@ -25,7 +145,6 @@ io.sockets.on('connect', function (socket) {
         }
     });
     socket.on('update', function (data) {
-        console.log('new addition to the stack received ' + data.gameID);
         addChoiceAndUpdateGame(data);
     });
     socket.on('leaveroom', function (data) {
@@ -34,36 +153,37 @@ io.sockets.on('connect', function (socket) {
 });
 
 var startNewGame = function (data, socket) {
-    data['gameID'] = createGame(data.player);
+    var gameID = gamestack.addGame(data);
+    data['gameID'] = gameID;
     data['type'] = "actors";
     data['firstStackEmit'] = true;
-    socket.join(data.gameID);
-    var getPopularPage = getApiOptions('popular', random(true));
-    request(getPopularPage)
+    socket.join(gameID);
+    var getPopularPage = new ApiRequest('popular', random(true));
+    request(getPopularPage.options)
         .then(JSON.parse)
         .then(getRandomActor)
         .then(request)
         .then(JSON.parse)
         .then(function (response) {
-        return createFirstStackObject(response, data);
+        return gamestack.getGame(data.gameID).pushCard(response, data);
     })
         .then(sendStack);
 };
 var joinGameInProgress = function (data, socket) {
     socket.join(data.gameID);
-    if (!gameStack[data.gameID].playerList[data.player]) {
-        gameStack[data.gameID].playerList[data.player] = 0;
+    if (!gamestack.getGame(data.gameID).playerList[data.player]) {
+        gamestack.getGame(data.gameID).playerList[data.player] = 0;
     }
     sendStack(data);
 };
 var addChoiceAndUpdateGame = function (data) {
-    var stack = gameStack[data.gameID].stack;
+    var stack = gamestack.getGame(data.gameID).cardStack;
     if (data.type !== stack[stack.length - 1].type) {
-        var options = getApiOptions(data.type, data.id);
-        request(options)
+        var apiRequest = new ApiRequest(data.type, data.id);
+        request(apiRequest.options)
             .then(JSON.parse)
             .then(function (response) {
-            return createStackObject(response, data);
+            return gamestack.getGame(data.gameID).pushCard(response, data);
         })
             .then(checkBacon)
             .then(sendStack);
@@ -72,110 +192,49 @@ var addChoiceAndUpdateGame = function (data) {
 
 var newPlayerInit = function (socket, data) {
     socket.username = data.username;
-    socket.emit('init', { game: {}, gameList: createGameList(), username: socket.username });
+    socket.emit('init', { game: {}, gameList: gamestack.getGamelist(), username: socket.username });
 };
 var sendStack = function (data) {
-    io.sockets.in(data.gameID).emit('update', { game: gameStack[data.gameID] });
-    io.sockets.emit('gameList', { gameList: createGameList() });
-    if (gameStack[data.gameID].actorCount === 7 || gameStack[data.gameID].isBacon === true) {
+    console.log(gamestack.getGame(data.gameID));
+    io.sockets.in(data.gameID).emit('update', { game: gamestack.getGame(data.gameID) });
+    io.sockets.emit('gameList', { gameList: gamestack.getGamelist() });
+    if (gamestack.getGame(data.gameID).actorCount === 7 || gamestack.getGame(data.gameID).isBacon === true) {
         removeGame(data.gameID);
     }
 };
 var removeGame = function (ID) {
-    gameStack[ID].stack = [{ name: 'Game Over' }];
-    gameStack[ID].players = { deadGame: 'Game Over' };
-    gameStack[ID].isBacon = true;
+    gamestack.getGame(ID).cardStack = [{ name: 'Game Over' }];
+    gamestack.getGame(ID).playerList = { deadGame: 'Game Over' };
+    gamestack.getGame(ID).isBacon = true;
     io.sockets.in(ID).emit('leaveroom');
-    io.sockets.emit('gameList', { gameList: createGameList() });
+    io.sockets.emit('gameList', { gameList: gamestack.getGamelist() });
 };
 
-var createFirstStackObject = function (jsonObject, data) {
-    addActorToStack(jsonObject, data);
-    return data;
-};
-var createStackObject = function (jsonObject, data) {
-    if (data.type === "actors") {
-        addActorToStack(jsonObject, data);
-    }
-    else if (data.type === "movies") {
-        addMovieToStack(jsonObject, data);
-    }
-    return data;
-};
-var addActorToStack = function (jsonObject, data) {
-    var newActorObject = createActorObject(jsonObject, data);
-    if (data.firstStackEmit !== true) {
-        gameStack[data.gameID].playerList[data.player] += 100;
-    }
-    gameStack[data.gameID].actorCount += 1;
-    gameStack[data.gameID].stack.push(newActorObject);
-};
-var addMovieToStack = function (jsonObject, data) {
-    var newMovieObject = createMovieObject(jsonObject, data);
-    gameStack[data.gameID].playerList[data.player] += 100;
-    gameStack[data.gameID].stack.push(newMovieObject);
-};
 var checkBacon = function (data) {
     var ID = data.gameID;
     var player = data.player;
-    var baconSearch = gameStack[ID].stack[gameStack[ID].stack.length - 1].credits;
+    var currentCardStack = gamestack.getGame(ID).cardStack;
+    var baconSearch = currentCardStack[currentCardStack.length - 1].credits;
     for (var actor = 0; actor < baconSearch.length; actor++) {
         if (baconSearch[actor].id === 4724) {
-            gameStack[ID].actorCount += 1;
-            gameStack[ID].playerList[player] += 100;
-            gameStack[ID].stack.push(returnBacon(data));
-            gameStack[ID].isBacon = true;
+            gamestack.getGame(ID).actorCount += 1;
+            gamestack.getGame(ID).playerList[player] += 100;
+            gamestack.getGame(ID).cardStack.push(returnBacon(data));
+            gamestack.getGame(ID).isBacon = true;
             break;
         }
     }
     return data;
 };
 var returnBacon = function (data) {
-    var kevinBacon = {
-        gameID: data.gameID,
-        player: data.player,
-        type: "actors",
+    var jsonObject = {
         name: "Kevin Bacon",
         id: 4724,
         poster: "http://image.tmdb.org/t/p/w92/p1uCaOjxSC1xS5TgmD4uloAkbLd.jpg",
         credits: []
     };
+    var kevinBacon = new StackCard(jsonObject, data);
     return kevinBacon;
-};
-
-var getApiOptions = function (optionsRequest, idOrPage) {
-    var apiKey = '';
-    var apiUrl = 'https://api.themoviedb.org/3/';
-    switch (optionsRequest) {
-        case 'popular':
-            return {
-                url: apiUrl + 'person/popular?page=' + idOrPage + '&api_key=' + apiKey,
-                method: "GET"
-            };
-            break;
-        case 'actors':
-            return {
-                url: apiUrl + 'person/' + idOrPage + '?api_key=' + apiKey + '&append_to_response=movie_credits',
-                method: "GET"
-            };
-            break;
-        case 'movies':
-            return {
-                url: apiUrl + 'movie/' + idOrPage + '?api_key=' + apiKey + '&append_to_response=credits',
-                method: "GET"
-            };
-            break;
-    }
-};
-var getPosterUrl = function (pageUrl) {
-    var posterUrl = 'http://image.tmdb.org/t/p/w92';
-    var unknownImg = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Question_mark_(black_on_white).png';
-    if (pageUrl !== null) {
-        return posterUrl + pageUrl;
-    }
-    else {
-        return unknownImg;
-    }
 };
 
 var random = function (type) {
@@ -188,80 +247,8 @@ var random = function (type) {
 };
 var getRandomActor = function (pageJSONObject) {
     var chosenActor = pageJSONObject.results[random(false)];
-    return getApiOptions('actors', chosenActor.id);
-};
-
-var createGameList = function () {
-    var gameList = gameStack.map(function (obj) {
-        var game = {
-            gameID: obj.gameID,
-            playerList: obj.playerList,
-            starting: obj.stack[0].name || null
-        };
-        return game;
-    });
-    return gameList;
-};
-var createGame = function (startingPlayer) {
-    var newGameID = gameNumber;
-    gameNumber++;
-    var players = {};
-    players[startingPlayer] = 0;
-    var game = {
-        gameID: newGameID,
-        playerList: players,
-        actorCount: 0,
-        isBacon: false,
-        stack: []
-    };
-    gameStack[newGameID] = game;
-    return newGameID;
-};
-var createMovieObject = function (jsonObject, data) {
-    var movieTitle = jsonObject.original_title;
-    var movieID = jsonObject.id;
-    var moviePoster = getPosterUrl(jsonObject.poster_path);
-    var movieCast = jsonObject.credits.cast.map(function (obj) {
-        var actor = {
-            type: "actors",
-            name: obj.name,
-            id: obj.id
-        };
-        return actor;
-    });
-    var newMovieObject = {
-        gameID: data.gameID,
-        player: data.player,
-        type: "movies",
-        name: movieTitle,
-        id: movieID,
-        poster: moviePoster,
-        credits: movieCast
-    };
-    return newMovieObject;
-};
-var createActorObject = function (jsonObject, data) {
-    var actorName = jsonObject.name;
-    var actorID = jsonObject.id;
-    var actorPoster = getPosterUrl(jsonObject.profile_path);
-    var actorMovies = jsonObject.movie_credits.cast.map(function (obj) {
-        var movie = {
-            type: "movies",
-            name: obj.original_title,
-            id: obj.id
-        };
-        return movie;
-    });
-    var newActorObject = {
-        gameID: data.gameID,
-        player: data.firstStackEmit ? "start" : data.player,
-        type: "actors",
-        name: actorName,
-        id: actorID,
-        poster: actorPoster,
-        credits: actorMovies
-    };
-    return newActorObject;
+    var actorRequest = new ApiRequest('actors', chosenActor.id);
+    return actorRequest.options;
 };
 
 //# sourceMappingURL=app.js.map

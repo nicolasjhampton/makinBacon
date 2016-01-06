@@ -1,3 +1,2 @@
-declare var gameStack: any[];
-declare var newGame: boolean;
-declare var gameNumber: number;
+/// <reference path="objectFunct.d.ts" />
+declare var gamestack: GameStack;

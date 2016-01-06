@@ -1,8 +1,10 @@
 /***********************
  8. randomizer functions
  ***********************/
+ 
+ /// <reference path="api.ts" />
 
- var random = function (type) {
+ var random = function (type: boolean) {
 
    if(type) {
      // true is for page
@@ -17,8 +19,10 @@
  var getRandomActor = function (pageJSONObject) {
 
    var chosenActor = pageJSONObject.results[random(false)];
+   
+   var actorRequest = new ApiRequest('actors', chosenActor.id);
 
-   return getApiOptions('actors', chosenActor.id);
+   return actorRequest.options;
 
  };
  /*   End of File  */

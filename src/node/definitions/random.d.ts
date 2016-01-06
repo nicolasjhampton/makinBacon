@@ -1,5 +1,3 @@
-declare var random: (type: any) => number;
-declare var getRandomActor: (pageJSONObject: any) => {
-    url: string;
-    method: string;
-};
+/// <reference path="api.d.ts" />
+declare var random: (type: boolean) => number;
+declare var getRandomActor: (pageJSONObject: any) => options;

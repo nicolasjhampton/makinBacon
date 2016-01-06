@@ -19,7 +19,7 @@
 
         <!--Second Column: Stack-->
         <div class="second">
-          <game-stack ng-repeat="stackItem in main.game.stack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
+          <game-stack ng-repeat="stackItem in main.game.cardStack |  orderBy:'+':true" first="$first" last="$last" stackitem="stackItem"></game-stack><!--Stack directive: Row repeats for every object in stack-->
         </div><!--End of Second Column-->
 
         <!--Third Column: Users-->

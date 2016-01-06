@@ -8,5 +8,6 @@ var random = function (type) {
 };
 var getRandomActor = function (pageJSONObject) {
     var chosenActor = pageJSONObject.results[random(false)];
-    return getApiOptions('actors', chosenActor.id);
+    var actorRequest = new ApiRequest('actors', chosenActor.id);
+    return actorRequest.options;
 };

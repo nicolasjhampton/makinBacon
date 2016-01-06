@@ -1,29 +1,79 @@
 /*************************
- 9. Object functions
+ 2. Object functions
  *************************/
  
  /// <reference path="api.ts" />
+ /// <reference path="globalVar.ts" />
+ 
+interface jsonMovieResponse {
+  original_title: string,
+  id: string,
+  poster_path: string,
+  credits: any
+}
 
- /*
-  * This is the function we'll use to create a list of the
-  * current games for a player to join
-  */
-var createGameList = function() {
+interface jsonActorResponse {
+  name: string,
+  id: string,
+  profile_path: string,
+  movie_credits: any
+}
 
- // create a list of games
- var gameList = gameStack.map(function(obj){
-   var game = {
-     gameID: obj.gameID,
-     playerList: obj.playerList,
-     starting: obj.stack[0].name || null
-   };
-   return game;
- });
 
- // return game list
- return gameList;
-
-};
+// make a singular reference for this movie
+class StackCard {
+  gameID: number;
+  player: string;
+  type: string;
+  name: string;
+  id: string;
+  poster: Poster;
+  credits;
+  
+  constructor(jsonObject, data) {
+    var cast;
+    var nameKey: string;
+    var creditsType: string;
+    var creditsKey: string;
+    var posterKey: string;
+    
+    if(data.type === "actors") {
+      
+      cast = jsonObject.movie_credits.cast;
+      nameKey = "name";
+      creditsKey = "original_title";
+      creditsType = "movies";
+      posterKey = 'profile_path';
+      
+    } else if (data.type === "movies"){
+      
+      cast = jsonObject.credits.cast;
+      nameKey = "original_title";
+      creditsKey = "name";
+      creditsType = "actors";
+      posterKey = 'poster_path';
+      
+    }
+    
+    // map a new array of movies actor has been in with only relevant details
+    var credits = cast.map(function(obj){
+      return {
+        type: creditsType,
+        name: obj[creditsKey],
+        id: obj.id
+      };
+    });
+    
+    this.gameID = data.gameID;
+    this.player = data.player;
+    this.type = data.type;
+    this.name = jsonObject[nameKey];
+    this.id = jsonObject.id;
+    this.poster = new Poster(jsonObject[posterKey]);
+    this.credits = credits;
+    
+  }
+}
 
 /*
  * This function will create the game object
@@ -33,114 +83,86 @@ var createGameList = function() {
  * we're also going to start storing the stack inside this
  * object.
  */
-var createGame = function (startingPlayer) {
 
-  // Create a new game w/ ID from the gameNumber index
-  var newGameID = gameNumber;
 
-  // increment the global gameNumber index
-  gameNumber++;
 
-  // Create an object that has usernames for each key and
-  // a score for each value
-  var players = {};
-  players[startingPlayer] = 0;
+class Game {
+  playerList: any;
+  actorCount: number;
+  isBacon: boolean;
+  cardStack: StackCard[];
+  
+  constructor(public gameID: number,
+              startingPlayer: string) {
+  
+    // Create an object that has usernames for each key and
+    // a score for each value
+    var players = {};
+    players[startingPlayer] = 0;
+  
+    // Create a new game w/ ID from the gameNumber index
+    //this.gameID = gameID;
+    this.playerList = players;
+    this.actorCount = 0;
+    this.isBacon = false;
+    this.cardStack = [];
 
-  // create a new game object
-  var game = {
-    gameID: newGameID,
-    playerList:players,
-    actorCount: 0,
-    isBacon: false,
-    stack:[]
   }
+  
+  pushCard(jsonObject, data) {
+    // If this is the first actor, points and credit go to no one
+    var stackcard = new StackCard(jsonObject, data);
+  
+    if(data.firstStackEmit !== true) { // If this is a new game
+      this.playerList[data.player] += 100;
+    }
+    
+    if(data.type === "actors") {// If this is an actors card
+      this.actorCount += 1; 
+    }
+  
+    // store this actor into the corresponding game in the gameStack
+    this.cardStack.push(stackcard);
+    
+    return data;
+  }
+  
+}
 
-  // We're going to put the game we create at it's location
-  // in the game stack that corresponds with it's gameID
-  gameStack[newGameID] = game;
-
-  return newGameID;
-
-};
-
-
-/*
- * These functions create the stack objects we'll emit back to the clients
- */
-
-// creates a movie stack object
-var createMovieObject = function(jsonObject, data) {
-
-  // pull the movie data we need from the response
-  var movieTitle = jsonObject.original_title;
-  var movieID = jsonObject.id;
-
-  // We're creating the filepath for our poster here
-  // Note: See 'themoviedb api variables' section for contents
-  var moviePoster = getPosterUrl(jsonObject.poster_path);
-
-  // map a new array of cast members with only relevant details
-  var movieCast = jsonObject.credits.cast.map(function(obj){
-    var actor = {
-      type: "actors",
-      name: obj.name,
-      id: obj.id
-    };
-    return actor;
-  });
-
-  // make a singular reference for this movie
-  var newMovieObject = {
-    gameID: data.gameID,
-    player: data.player,
-    type: "movies",
-    name: movieTitle,
-    id: movieID,
-    poster: moviePoster,
-    credits: movieCast
-  };
-
-  // return created object
-  return newMovieObject;
-
-};
-
-// Creates an actor stack object
-var createActorObject = function(jsonObject, data) {
-
-  // store details for the chosen actor
-  var actorName = jsonObject.name;
-  var actorID = jsonObject.id;
-
-  // We're creating the filepath for our poster here
-  // Note: See 'themoviedb api variables' section for contents
-
-  var actorPoster = getPosterUrl(jsonObject.profile_path);
+class GameStack {
+  
+  stack: Game[];
+  gameCount: number;
+  
+  constructor() {
+    this.stack = [];
+    this.gameCount = 0;
+  } 
+  
+  getGamelist() {
+    return this.stack.map(function(obj: Game){
+      return {
+        gameID: obj.gameID,
+        playerList: obj.playerList,
+        starting: obj.cardStack[0].name || null
+      }; 
+    });
+  }
+  
+  addGame(data){
+    var game = new Game(this.gameCount, data.player);
+    this.stack[this.gameCount] = game;
+    this.gameCount++;
+    return game.gameID;
+  }
+  
+  getGame(gameID){
+    return this.stack[gameID];
+  }
+ 
+}
 
 
-  // map a new array of movies actor has been in with only relevant details
-  var actorMovies = jsonObject.movie_credits.cast.map(function(obj){
-    var movie = {
-      type: "movies",
-      name: obj.original_title,
-      id: obj.id
-    };
-    return movie;
-  });
 
-  // make a singular reference object for this actor
-  var newActorObject = {
-    gameID: data.gameID,
-    player: data.firstStackEmit ? "start" : data.player,
-    type: "actors",
-    name: actorName,
-    id: actorID,
-    poster: actorPoster,
-    credits: actorMovies
-  };
 
-  // return created object
-  return newActorObject;
-
-};
 /*   End of File  */
